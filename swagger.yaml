@@ -117,12 +117,6 @@ paths:
               msg:
                 type: string
                 description: 登录结果信息
-              user_id:
-                type: string
-                description: 用户学号
-              username:
-                type: string
-                description: 用户名
         400:
           description: 参数不全
           schema:
@@ -924,6 +918,8 @@ paths:
                 type: string
               format:
                 type: string
+              type:
+                type: string  
               content :
                 type: string
               subject:
@@ -973,6 +969,18 @@ paths:
             properties:
               file_url:
                 type: integer
+              file_title:
+                type: string
+              college:
+                type: string
+              subject:
+                type: string
+              format:
+                type: string
+              introduction:
+                type: string
+              type:
+                type: string
       responses:
         200:
           description: success
@@ -1240,3 +1248,135 @@ paths:
             properties:
               msg:
                 type: string 
+                
+  /coursepage/:
+    get:
+      tags:
+       - page
+      summary: 课程页面显示
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: header
+          type: string
+          required: false
+        - name: data
+          in: body
+          schema:
+            type: object
+            properties:
+              college:
+                type: string
+              subject:
+                type: string
+              format:
+                type: string
+              type:
+                type: string
+              arrange_way:
+                type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+              file:
+                type: object
+                properties:
+                  file_title:
+                    type: string
+                  uploader:
+                    type: string
+                  image_url1:
+                    type: string
+                  likes_num:
+                    type: integer
+                  download_num:
+                    type: integer
+                  collect_num:
+                    type: integer
+                  upload_time:
+                    type: string
+                  score:
+                    type: integer
+        '400':
+          description: 参数不全
+          schema: 
+            type: object
+            properties:
+              msg:
+                type: string
+        '401':
+          description: 身份认证失败
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+
+  /firstpage/:
+    get:
+      tags:
+        - page
+      summary: 首页显示
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: token
+          in: header
+          type: string
+          required: false
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              latestfile:
+                type: object
+                properties:
+                  file_name:
+                    type: string
+                  introduction:
+                    type: string
+                  download_num:
+                    type: string
+                  uploader:
+                    type: string
+                  upload_time:
+                    type: string
+              popularfile:
+                type: object
+                properties:
+                  file_name:
+                    type: string
+                  introduction:
+                    type: string
+                  download_num:
+                    type: string
+                  uploader:
+                    type: string
+                  upload_time:
+                    type: string
+        '400':
+          description: 参数不全
+          schema: 
+            type: object
+            properties:
+              msg:
+                type: string
+        '401':
+          description: 身份认证失败
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
