@@ -6,7 +6,7 @@ info:
   title: sharing
     
 host: 47.102.120.167:2333
-basePath: /api
+basePath: /api/v1
 tags:
   - name: user
     description: user
