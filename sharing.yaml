@@ -159,20 +159,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            type: object
-            properties:
-              msg:
-                type: string
-              username:
-                type: string
-              signture:
-                type: string
-              image_url:
-                type: string
-              fans_num:
-                type: integer
-              follower_num:
-                type: integer
+            $ref: '#/definitions/user_info'
         400:
           description: 参数不全
           schema:
@@ -192,12 +179,12 @@ paths:
     put:
       tags:
         - user
-      summary: 修改背景（如果本来没有头像，用这个上传）
+      summary: 修改背景
       parameters:
         - name: user_id
           in: path
           required: true
-          description: the user's userid
+          description: the user's user_id
           type: integer
         - name: token
           in: header
@@ -326,11 +313,11 @@ paths:
               msg:
                 type: string  
                 
-  /user/{user_id}/follower/:
+  /user/{user_id}/following/:
     get:
       tags:
         - user
-      summary: follower列表和动态
+      summary: following列表和动态
       description: get the follower list
       #operationId: uploadFile
       produces:
@@ -412,11 +399,11 @@ paths:
               msg:
                 type: string
 
-  /user/follower/:
+  /user/following/:
     delete:
       tags:
         - user
-      summary: 移除follower
+      summary: 移除following
       parameters:
         - name: user_id
           in: path
@@ -483,6 +470,15 @@ paths:
           in: header
           required: true
           type: string
+        - name: limit
+          in: query
+          type: integer
+          description: the limit number of user's followers returned
+          required: true
+        - name: page
+          in: query
+          type: integer
+          description: Page number
       
       responses:
         '200':
@@ -902,7 +898,7 @@ paths:
               msg:
                 type: string   
                 
-  /file/info/:
+  /file/{file_id}:
     get:
       tags:
         - file
@@ -911,50 +907,19 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: file_id
+          in: path
+          required: true
+          type: string
         - name: token
           in: header
           required: true
           type: string
-        - name: data
-          in: body
-          schema:
-            required:
-              - file_id
-            properties:
-              file_id:
-                type: integer
       responses:
         '200':
           description: successful operation
           schema:
-            type: object
-            properties:
-              msg:
-                type: string
-              file_name:
-                type: string
-              file_url:
-                type: string
-              format:
-                type: string
-              type:
-                type: string  
-              content :
-                type: string
-              subject:
-                type: string
-              like:
-                type: integer
-              grade:
-                type: integer
-              size:
-                type: integer
-              collect_num:
-                type: integer
-              down_num:
-                type: integer
-              up_time:
-                type: integer
+            $ref: '#/definitions/file_info'
         400:
           description: 参数不全
           schema:
@@ -1078,7 +1043,7 @@ paths:
               msg:
                 type: string  
   
-  /file/collection/:
+  /file/collect/:
     post:
       tags:
         - file
@@ -1305,6 +1270,7 @@ paths:
                 type: string
               arrange_way:
                 type: string
+                description: 索引条件
       responses:
         200:
           description: successful operation
@@ -1347,4 +1313,56 @@ paths:
               msg:
                 type: string
 
-  
+definitions:
+  user_info:
+    required: 
+      - username
+      - image_url
+      - signature
+      - fans_num
+      - following_num
+    properties:
+      username:
+        type: string
+      image_url:
+        type: string
+      signature:
+        type: string
+      fans_num:
+        type: integer
+      following_num:
+        type: integer
+  file_info:
+    properties:
+      file_name:
+        type: string
+      file_url:
+        type: string
+      format:
+        type: string
+      content: 
+        type: string
+        description: summary of the file
+      subject:
+        type: string
+      likes_num:
+        type: integer
+      grade:
+        type: integer
+      collect_num:
+        type: integer
+      down_num:
+        type: integer
+      up_time:
+        type: string
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      
