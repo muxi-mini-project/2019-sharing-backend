@@ -9,9 +9,12 @@ host: 47.102.120.167:2333
 basePath: /api/v1
 tags:
   - name: user
-    description: user
+    description: the api of user
   - name: file
-    description: file
+    description: the api of file
+  - name: message
+    description: the api of message
+   
     
 schemes:
   - https
@@ -136,27 +139,22 @@ paths:
      #       - 'write:pets'
       #      - 'read:pets'
       
-  /user/info/:
+  /user/{user_id}:
     get:
       tags:
         - user
-      summary: 自己或他人个人信息
-      description: user's information
-      produces:
-        - application/js on
+      summary: 获取特定用户的身份信息
+      description: get user's info based on user_id
       parameters:
         - name: token
           in: header
           required: true
           type: string
-        - name: data
-          in: body
-          schema:
-            required:
-              - user_id
-            properties:
-              user_id:
-                type: integer
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -190,12 +188,17 @@ paths:
               msg:
                 type: string
   
-  /user/background/:
+  /user/{user_id}/background/:
     put:
       tags:
         - user
       summary: 修改背景（如果本来没有头像，用这个上传）
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
         - name: token
           in: header
           required: true
@@ -231,12 +234,17 @@ paths:
               msg:
                 type: string
                 
-  /user/image/:
+  /user/{user_id}/image/:
     put:
       tags:
         - user
       summary: 修改头像
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
         - name: token
           in: header
           required: true
@@ -272,12 +280,17 @@ paths:
               msg:
                 type: string
             
-  /user/signture/:
+  /user/{user_id}/signture/:
     put:
       tags:
         - user
       summary: 修改签名
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
         - name: token
           in: header
           required: true
@@ -313,7 +326,7 @@ paths:
               msg:
                 type: string  
                 
-  /user/user_id/follower/:
+  /user/{user_id}/follower/:
     get:
       tags:
         - user
@@ -323,14 +336,25 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+          description: the limit number of user's followers returned
+          required: true
+        - name: page
+          in: query
+          type: integer
+          description: Page number
         - name: token
           in: header
           required: true
           type: string
-        - name: user_id
-          in: path
-          required: true
-          type: integer
+    
       responses:
         '200':
           description: successful operation
@@ -394,6 +418,11 @@ paths:
         - user
       summary: 移除follower
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
         - name: token
           in: header
           required: true
@@ -436,7 +465,7 @@ paths:
               msg:
                 type: string 
 
-  /user/user_id/fans/:
+  /user/{user_id}/fans/:
     get:
       tags:
         - user
@@ -445,14 +474,16 @@ paths:
       produces:
         - application/json
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: the user's userid
+          type: integer
         - name: token
           in: header
           required: true
           type: string
-        - name: user_id
-          in: path
-          required: true
-          type: integer  
+      
       responses:
         '200':
           description: successful operation
