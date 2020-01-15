@@ -1,4 +1,4 @@
-DROP DATABASE IF EXTSTS `muxi_sharing`;
+DROP DATABASE IF EXISTS `muxi_sharing`;
 
 CREATE DATABASE `muxi_sharing`;
 
@@ -29,8 +29,8 @@ CREATE TABLE `file` (
   `content`        VARCHAR(100) NOT NULL COMMENT  "文件内容介绍",
   `subject`        VARCHAR(20)  NOT NULL COMMENT  "学科" ,
   `college`        VARCHAR(20)  NOT NULL COMMENT  "学院" ,
-  `type`           VARCHAR(20)  NOT NULL COMMENT  "文件类型/(复习资料/历年真题/...)"
-  `grade`          FLOAT        NOT NULL DEFAULT 0 COMMENT "评分" , 
+  `type`           VARCHAR(20)  NOT NULL COMMENT  "文件类型/(复习资料/历年真题/...)",
+  `grade`          INT          NOT NULL DEFAULT 0 COMMENT "评分" , 
   `like_num`       INT          NOT NULL DEFAULT 0 COMMENT "点赞数" ,
   `collect_num`    INT          NOT NULL DEFAULT 0 COMMENT "收藏数" ,
   `download_num`   INT          NOT NULL DEFAULT 0 COMMENT "下载数" ,
@@ -38,7 +38,7 @@ CREATE TABLE `file` (
   PRIMARY KEY (`file_id`) ,
   KEY `file_name` (`file_name`) ,
   KEY `format` (`format`) ,
-  KEY `type` (`type`）
+  KEY `type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- 关注中间表
@@ -48,7 +48,7 @@ CREATE TABLE `following_fans` (
   `fans_id`  INT  NOT NULL COMMENT "粉丝名" ,
   
   PRIMARY KEY (`id`) ,
-  KEY `following_id` (`following_id`)
+  KEY `following_id` (`following_id`),
   KEY `fans_id` (`fans_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
