@@ -29,8 +29,13 @@ CREATE TABLE `file` (
   `content`        VARCHAR(100) NOT NULL COMMENT  "文件内容介绍",
   `subject`        VARCHAR(20)  NOT NULL COMMENT  "学科" ,
   `college`        VARCHAR(20)  NOT NULL COMMENT  "学院" ,
+<<<<<<< HEAD
   `type`           VARCHAR(20)  NOT NULL COMMENT  "文件类型/(复习资料/历年真题/...)" ,
   `grade`          FLOAT        NOT NULL DEFAULT 0 COMMENT "评分" , 
+=======
+  `type`           VARCHAR(20)  NOT NULL COMMENT  "文件类型/(复习资料/历年真题/...)",
+  `grade`          INT          NOT NULL DEFAULT 0 COMMENT "评分" , 
+>>>>>>> da45d252bb710a20617dc532da8c1030722a14ae
   `like_num`       INT          NOT NULL DEFAULT 0 COMMENT "点赞数" ,
   `collect_num`    INT          NOT NULL DEFAULT 0 COMMENT "收藏数" ,
   `download_num`   INT          NOT NULL DEFAULT 0 COMMENT "下载数" ,
@@ -48,8 +53,13 @@ CREATE TABLE `following_fans` (
   `fans_id`        INT          NOT NULL COMMENT "粉丝id" ,
 
   PRIMARY KEY (`id`) ,
+<<<<<<< HEAD
   KEY `following_id` (`following_id`) ,
   KEY `fans_id` (`fans_id`) 
+=======
+  KEY `following_id` (`following_id`),
+  KEY `fans_id` (`fans_id`)
+>>>>>>> da45d252bb710a20617dc532da8c1030722a14ae
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- 上传中间表
