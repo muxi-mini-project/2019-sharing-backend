@@ -18,7 +18,7 @@ schemes:
   - http
   
 paths:
-  /register/:
+  /user/register/:
     post:
       tags:
         - user
@@ -79,7 +79,7 @@ paths:
      #       - 'write:pets'
       #      - 'read:pets'
       
-  /login/:
+  /user/login/:
     post:
       tags:
         - user
@@ -136,8 +136,8 @@ paths:
      #       - 'write:pets'
       #      - 'read:pets'
       
-  /user_info/:
-    put:
+  /user/user_info/:
+    get:
       tags:
         - user
       summary: 自己或他人个人信息
@@ -190,11 +190,11 @@ paths:
               msg:
                 type: string
   
-  /background_modify/:
+  /user/background/modify/:
     put:
       tags:
         - user
-      summary: 修改头像（如果本来没有头像，用这个上传）
+      summary: 修改背景（如果本来没有头像，用这个上传）
       parameters:
         - name: token
           in: header
@@ -231,7 +231,7 @@ paths:
               msg:
                 type: string
                 
-  /image_modify/:
+  /user/image/modify/:
     put:
       tags:
         - user
@@ -272,7 +272,7 @@ paths:
               msg:
                 type: string
             
-  /signture_modify/:
+  /user/signture/modify/:
     put:
       tags:
         - user
@@ -313,8 +313,8 @@ paths:
               msg:
                 type: string  
                 
-  /follower/:
-    put:
+  /user/user_id/follower/:
+    get:
       tags:
         - user
       summary: follower列表和动态
@@ -327,14 +327,10 @@ paths:
           in: header
           required: true
           type: string
-        - name: data
-          in: body
-          schema:
-            required:
-              - user_id
-            properties:
-              user_id:
-                type: integer
+        - name: user_id
+          in: path
+          required: true
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -392,11 +388,11 @@ paths:
               msg:
                 type: string
 
-  /follower_delete/:
+  /user/follower/deletion/:
     delete:
       tags:
         - user
-      summary: 移除follow
+      summary: 移除follower
       parameters:
         - name: token
           in: header
@@ -440,8 +436,8 @@ paths:
               msg:
                 type: string 
 
-  /fans/:
-    put:
+  /user/user_id/fans/:
+    get:
       tags:
         - user
       summary: fans列表
@@ -453,14 +449,10 @@ paths:
           in: header
           required: true
           type: string
-        - name: data
-          in: body
-          schema:
-            required:
-              - user_id
-            properties:
-              user_id:
-                type: integer  
+        - name: user_id
+          in: path
+          required: true
+          type: integer  
       responses:
         '200':
           description: successful operation
@@ -498,8 +490,8 @@ paths:
               msg:
                 type: string
   
-  /massage_info/:
-    put:
+  /massage/user_id/massage_info/:
+    get:
       tags:
         - massage
       summary: 留言
@@ -511,14 +503,10 @@ paths:
           in: header
           required: true
           type: string
-        - name: data
-          in: body
-          schema:
-            required:
-              - user_id
-            properties:
-              user_id:
-                type: integer
+        - name: user_id
+          in: path
+          required: true
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -556,8 +544,8 @@ paths:
               msg:
                 type: string               
   
-  /massage_up/:
-    delete:
+  /massage/upload/:
+    post:
       tags:
         - massage
       summary: 发出留言
@@ -608,8 +596,8 @@ paths:
                 type: string
 
   
-  /file_down_list/:
-    put:
+  /user/down_list/:
+    get:
       tags:
         - user
       summary: 下载列表
@@ -667,8 +655,8 @@ paths:
               msg:
                 type: string
     
-  /file_up_list/:
-    put:
+  /user/up_list/:
+    get:
       tags:
         - user
       summary: 上传列表
@@ -726,8 +714,8 @@ paths:
               msg:
                 type: string    
     
-  /file_collect_list/:
-    put:
+  /user/collection_list/:
+    get:
       tags:
         - user
       summary: 收藏列表
@@ -787,7 +775,7 @@ paths:
               msg:
                 type: string
 
-  /file_cancel_collect_list/:
+  /file/cancel_collection/:
     delete:
       tags:
         - file
@@ -835,7 +823,7 @@ paths:
               msg:
                 type: string 
                 
-  /file_delete/:
+  /file/deletion/:
     delete:
       tags:
         - file
@@ -883,8 +871,8 @@ paths:
               msg:
                 type: string   
                 
-  /file_info/:
-    put:
+  /file/file_info/:
+    get:
       tags:
         - file
       summary: 文件信息
@@ -951,8 +939,8 @@ paths:
               msg:
                 type: string
    
-  /file_up/:
-    put:
+  /file/upload/:
+    post:
       tags:
         - file
       summary: 上传文件
@@ -1011,8 +999,8 @@ paths:
               msg:
                 type: string   
                 
-  /file_down/:
-    put:
+  /file/download/:
+    post:
       tags:
         - file
       summary: 下载文件
@@ -1059,8 +1047,8 @@ paths:
               msg:
                 type: string  
   
-  /file_collect/:
-    put:
+  /file/collection/:
+    post:
       tags:
         - file
       summary: 收藏文件
@@ -1110,7 +1098,7 @@ paths:
               msg:
                 type: string  
                 
-  /collect_list_modify/:
+  /file/collect_list/modify/:
     put:
       tags:
         - file
@@ -1153,7 +1141,7 @@ paths:
               msg:
                 type: string
   
-  /file_like/:
+  /file/like/:
     put:
       tags:
         - file
@@ -1201,7 +1189,7 @@ paths:
               msg:
                 type: string  
   
-  /file_cancel_like/:
+  /file/cancel_like/:
     delete:
       tags:
         - file
@@ -1249,11 +1237,11 @@ paths:
               msg:
                 type: string 
                 
-  /coursepage/:
+  /file/searching/:
     get:
       tags:
-       - page
-      summary: 课程页面显示
+       - file
+      summary: 课程搜索文件
       consumes:
         - application/json
       produces:
@@ -1263,6 +1251,14 @@ paths:
           in: header
           type: string
           required: false
+        - name: page
+          in: query
+          required: true
+          type: integer
+        - name: limite
+          in: query
+          required: true
+          type: integer
         - name: data
           in: body
           schema:
@@ -1320,63 +1316,4 @@ paths:
               msg:
                 type: string
 
-  /firstpage/:
-    get:
-      tags:
-        - page
-      summary: 首页显示
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: token
-          in: header
-          type: string
-          required: false
-      responses:
-        200:
-          description: successful operation
-          schema:
-            type: object
-            properties:
-              latestfile:
-                type: object
-                properties:
-                  file_name:
-                    type: string
-                  introduction:
-                    type: string
-                  download_num:
-                    type: string
-                  uploader:
-                    type: string
-                  upload_time:
-                    type: string
-              popularfile:
-                type: object
-                properties:
-                  file_name:
-                    type: string
-                  introduction:
-                    type: string
-                  download_num:
-                    type: string
-                  uploader:
-                    type: string
-                  upload_time:
-                    type: string
-        '400':
-          description: 参数不全
-          schema: 
-            type: object
-            properties:
-              msg:
-                type: string
-        '401':
-          description: 身份认证失败
-          schema:
-            type: object
-            properties:
-              msg:
-                type: string
+  
