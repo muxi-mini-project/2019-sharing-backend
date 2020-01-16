@@ -34,6 +34,8 @@ CREATE TABLE `file` (
   `like_num`       INT          NOT NULL DEFAULT 0 COMMENT "点赞数" ,
   `collect_num`    INT          NOT NULL DEFAULT 0 COMMENT "收藏数" ,
   `download_num`   INT          NOT NULL DEFAULT 0 COMMENT "下载数" ,
+  `uploader`       VARCHAR(20)  NOT NULL DEFAULT 0 COMMENT "上传者" ,
+  `upload_time`    DATETIME     NOT NULL COMMENT "上传时间" ,
 
   PRIMARY KEY (`file_id`) ,
   KEY `file_name` (`file_name`) ,
@@ -50,19 +52,6 @@ CREATE TABLE `following_fans` (
   PRIMARY KEY (`id`) ,
   KEY `following_id` (`following_id`) ,
   KEY `fans_id` (`fans_id`) 
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
--- 上传中间表
-CREATE TABLE `file_uploader` (
-  `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
-  `uploader_id`    INT           NOT NULL COMMENT "上传文件的用户ID" ,
-  `file_id`        INT           NOT NULL COMMENT "被上传的文件ID" ,
-  `upload_time`    DATETIME      NOT NULL COMMENT "上传时间" ,
-
-  PRIMARY KEY (`id`) ,
-  KEY `uploader_id` (`uploader_id`) ,
-  KEY `file_id` (`file_id`) ,
-  KEY `upload_time` (`upload_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- 下载中间表
