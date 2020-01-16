@@ -1,25 +1,22 @@
 package model
 
 import (
-     "github.com/stretchr/testify/assert"
      "log"
-      "time"
 )
 
 type File struct {
-     FileId int
-     FileUrl string
-     FileName string
-     Format string
-     Content string
-     Subject string
-     College string
-     Type string
-     Grade float32
-     Likes int
-     CollcetNumber int
-     DownloadNumber int
-     Status bool
+     FileId   int       `gorm:"file_id"`
+     FileUrl  string    `gorm:"file_url"`
+     FileName string    `gorm:"file_name"`
+     Format   string    `gorm:"format"`
+     Content  string    `gorm:"content"`
+     Subject  string    `gorm:"subject"`
+     College  string    `gorm:"college"`
+     Type     string    `gorm:"type"`
+     Grade    float32   `gorm:"grade"`
+     Likes    int       `gorm:"like_num"`
+     CollcetNumber  int `gorm:"collect_num"`
+     DownloadNumber int `gorm:"download_num"`
 }
 
 func CreateNewfile(uploader string,filename string, fileurl string,format string, content string, subject string ,college string, typename string) bool {
@@ -53,7 +50,7 @@ func Deletefile(fileid int) bool {
      if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).Delete(&File{}).Error; err != nil {
           log.Print("删除失败")
           log.Println(err)
-          return assert.False()
+          return false
      }
      return true
 }
