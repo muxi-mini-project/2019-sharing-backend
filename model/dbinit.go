@@ -18,17 +18,19 @@ var Db *Database
 func getDatabase() (*gorm.DB, error) {
      db, err := gorm.Open("mysql", dns)
      if err != nil {
-	fmt.Print("getDatabase")
-	log.Println(err)
+	    fmt.Print("getDatabase")
+	    log.Println(err)
      }
+	 db.SingularTable(true)
      return db, err
+
 }
 
 func (db *Database) Init() {
      newDb, err := getDatabase()
      if err != nil {
-	log.Print("数据库初始化错误")
-	log.Println(err)
+	    log.Print("数据库初始化错误")
+	    log.Println(err)
      }
      Db = &Database{Self: newDb}
      return
@@ -36,8 +38,8 @@ func (db *Database) Init() {
 
 func (db *Database) Close() {
       if err := Db.Self.Close(); err != nil {
-	 log.Print("数据库关闭错误")
-	 log.Println(err)
+	     log.Print("数据库关闭错误")
+	     log.Println(err)
       }
       return
 }
