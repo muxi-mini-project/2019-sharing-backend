@@ -55,11 +55,7 @@ paths:
           description: successfully login
           schema:
             type: object
-            required:
-              - token
             properties:
-              token:
-                type: string
               msg:
                 type: string
                 description: 注册结果信息
