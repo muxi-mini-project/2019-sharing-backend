@@ -91,3 +91,36 @@ func DownloadFile(fileid int) string {
 	}
 	return tmpfile.FileUrl
 }
+
+func likeAdd(fileid int, userid int) bool  {
+	var tmpfile File
+	if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).First(&tmpfile).Error; err != nil {
+		log.Print("查无此数据")
+		log.Println(err)
+		return false
+	}
+	tmpfile.Likes++
+	if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).Update(&tmpfile).Error; err != nil {
+		log.Print("更新失败")
+		log.Println(err)
+		return false
+	}
+	return true
+}
+
+func likeDrop(fileid int, userid int) bool  {
+	var tmpfile File
+	if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).First(&tmpfile).Error; err != nil {
+		log.Print("查无此数据")
+		log.Println(err)
+		return false
+	}
+	tmpfile.Likes--
+	if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).Update(&tmpfile).Error; err != nil {
+		log.Print("更新失败")
+		log.Println(err)
+		return false
+	}
+	return true
+}
+
