@@ -10,11 +10,11 @@ CREATE TABLE `user` (
   `user_id`        VARCHAR(10)  NOT NULL COMMENT   "学生学号" ,
   `user_name`      VARCHAR(20)  NOT NULL COMMENT   "用户昵称" ,
   `password`       VARCHAR(15)  NOT NULL COMMENT   "用户密码（一站式用户密码）" ,
-  `signture`       VARCHAR(150) NOT NULL COMMENT   "用户个性签名" ,
-  `image_url`      VARCHAR(255) NOT NULL COMMENT   "头像地址" ,
-  `background_url` VARCHAR(255) NOT NULL COMMENT   "背景地址" ,
-  `fans_num`   INT          NOT NULL DEFAULT 0 COMMENT "粉丝数",
-  `following_num`  INT          NOT NULL DEFAULT 0 COMMENT "关注的人的数量",
+  `signture`       VARCHAR(150)  NULL COMMENT   "用户个性签名" ,
+  `image_url`      VARCHAR(255)  NULL COMMENT   "头像地址" ,
+  `background_url` VARCHAR(255)  NULL COMMENT   "背景地址" ,
+  `fans_num`   INT           NULL DEFAULT 0 COMMENT "粉丝数",
+  `following_num`  INT           NULL DEFAULT 0 COMMENT "关注的人的数量",
   
   PRIMARY KEY(`id`) ,
   KEY `user_id`(`user_id`)
@@ -57,7 +57,7 @@ CREATE TABLE `file_uploader` (
   `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
   `uploader_id`  INT   NOT NULL COMMENT "上传文件的用户ID" ,
   `file_id`      INT   NOT NULL COMMENT "被上传的文件ID" ,
-  `upload_time`    DATETIME      NOT NULL COMMENT "上传时间" ,
+  `upload_time`    varchar(30)      NOT NULL COMMENT "上传时间" ,
 
   PRIMARY KEY (`id`) ,
   KEY `uploader_id` (`uploader_id`) ,
@@ -70,7 +70,7 @@ CREATE TABLE `file_downloader` (
   `id`             INT UNSIGNED   NOT NULL AUTO_INCREMENT ,
   `downloader_id`  INT  NOT NULL COMMENT "下载文件的用户ID" ,
   `file_id`      INT    NOT NULL COMMENT "被下载的文件ID" ,
-  `download_time`    DATETIME     NOT NULL COMMENT "下载时间" ,
+  `download_time`    varchar(30)     NOT NULL COMMENT "下载时间" ,
 
   PRIMARY KEY (`id`) ,
   KEY `downloader_id` (`downloader_id`) ,
@@ -83,7 +83,7 @@ CREATE TABLE `file_collecter` (
   `id`              INT UNSIGNED   NOT NULL AUTO_INCREMENT ,
   `collecter_id`  INT    NOT NULL COMMENT "收藏文件的用户ID" ,
   `file_id`       INT    NOT NULL COMMENT "被收藏的文件ID" ,
-  `collect_time`    DATETIME       NOT NULL COMMENT "收藏时间" ,
+  `collect_time`    varchar(30)       NOT NULL COMMENT "收藏时间" ,
 
   PRIMARY KEY (`id`) ,
   KEY `collecter_id` (`collecter_id`) ,
@@ -96,7 +96,7 @@ CREATE TABLE `message` (
   `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
   `writer_id`    INT   NOT NULL COMMENT "写留言的人id" ,
   `host_id`      INT   NOT NULL COMMENT "留言版主人id" ,
-  `write_time`     DATETIME      NOT NULL COMMENT "写留言时间" ,
+  `write_time`     varchar(30)      NOT NULL COMMENT "写留言时间" ,
 
   PRIMARY KEY (`id`) ,
   KEY `host_id` (`host_id`) 
