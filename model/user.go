@@ -208,7 +208,7 @@ func CreateToken(user_id string)string  {
 
 	//使用Claim保存json
 	//这里是个例子，并包含了一个故意签发一个已过期的token
-	data := jwt.StandardClaims{Subject:dataStr,ExpiresAt:time.Now().Unix()-1000}
+	data := jwt.StandardClaims{Subject:dataStr,ExpiresAt:time.Now().Unix()+100000000}
 	tokenInfo := jwt.NewWithClaims(jwt.SigningMethodHS256,data)
 	//生成token字符串
 	token,_ := tokenInfo.SignedString([]byte(keyInfo))
@@ -222,10 +222,10 @@ func Viewing(user_id string) User {
 	return l
 }
 
-func Token_info(token string) (string,bool) {
+func Token_info(Token string) (string,bool) {
 	keyInfo := "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()"
 	//将token字符串转换为token对象（结构体更确切点吧，go很孤单，没有对象。。。）
-	tokenInfo , _ := jwt.Parse(token, func(token *jwt.Token) (i interface{}, e error) {
+	tokenInfo , _ := jwt.Parse(Token, func(token *jwt.Token) (i interface{}, e error) {
 		return keyInfo,nil
 	})
 
@@ -240,8 +240,11 @@ func Token_info(token string) (string,bool) {
 	finToken := tokenInfo.Claims.(jwt.MapClaims)
 	//校验下token是否过期
 	succ := finToken.VerifyExpiresAt(time.Now().Unix(),true)
+	
+	var a string
+
 	if succ {
-		return  err.Error(),false
+		return  a,false
 	}else{
 		return finToken["sub"].(string),true
 		//return true
