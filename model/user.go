@@ -36,6 +36,10 @@ type User struct{
 	Following_num	int	`json:"following_num"`
 }
 
+type Following_fan struct{
+	Following_id
+}
+
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
 	params,err := makeAccountPreflightRequest()
@@ -254,4 +258,16 @@ func Token_info(Token string) (string,bool) {
     //获取token中保存的用户信息
 	//fmt.Println(finToken["sub"])
 	//return finToken["sub"]
+}
+
+func Background_modify(user_id string,background_url string)  {
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Background_url: background_url})
+}
+
+func Image_modify(user_id string,image_url string)  {
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})
+}
+
+func Signture_modify(user_id string,signture string)  {
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})
 }

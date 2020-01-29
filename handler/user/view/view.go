@@ -13,7 +13,7 @@ func View(c *gin.Context){
 	//var Token	string
 	
 	Token := c.Request.Header.Get("Token")
-	// if  err = nil	{
+	// if  Token = nil	{
     //     handler.SendBadRequest(c)
     //     return
     // }
