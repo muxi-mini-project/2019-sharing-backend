@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	//"fmt"
+	"fmt"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"log"
@@ -36,8 +36,9 @@ type User struct{
 	Following_num	int	`json:"following_num"`
 }
 
-type Following_fan struct{
-	Following_id
+type Following_fans struct{
+	Following_id	string	`json:"following_id"`
+	Fans_id			string	`json:"fans_id"`
 }
 
 //确认模拟登陆是否成功
@@ -211,13 +212,14 @@ func CreateToken(user_id string)string  {
 	var dataStr = string(dataByte)
 
 	//使用Claim保存json
-	//这里是个例子，并包含了一个故意签发一个已过期的token
-	data := jwt.StandardClaims{Subject:dataStr,ExpiresAt:time.Now().Unix()+100000000}
+	
+	data := jwt.StandardClaims{Subject:dataStr}
 	tokenInfo := jwt.NewWithClaims(jwt.SigningMethodHS256,data)
 	//生成token字符串
 	token,_ := tokenInfo.SignedString([]byte(keyInfo))
 	return token
 }
+
 
 func Viewing(user_id string) User {
 	var l User
@@ -243,15 +245,16 @@ func Token_info(Token string) (string,bool) {
 	
 	finToken := tokenInfo.Claims.(jwt.MapClaims)
 	//校验下token是否过期
-	succ := finToken.VerifyExpiresAt(time.Now().Unix(),true)
-	
+	succ := finToken.VerifyExpiresAt(time.Now().Unix()+100000,true)
+	fmt.Println("succ",succ)
 	var a string
 
 	if succ {
 		return  a,false
 	}else{
+		//fmt.Println(finToken["sub"])
 		return finToken["sub"].(string),true
-		//return true
+		
 	}
 
 	//fmt.Println("succ",succ)
@@ -260,14 +263,24 @@ func Token_info(Token string) (string,bool) {
 	//return finToken["sub"]
 }
 
-func Background_modify(user_id string,background_url string)  {
-	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Background_url: background_url})
+func Background_modify(user_id string,background_url string) error {
+
+	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Background_url: background_url}).Error;err !=nil{
+		return err
+	}
+	fmt.Println("111")
+	return nil
 }
 
 func Image_modify(user_id string,image_url string)  {
+	//DB.Self.First(&User{})
 	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})
 }
 
 func Signture_modify(user_id string,signture string)  {
 	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})
+}
+
+func CreateFollowing(fans_id string,following_id string) {
+	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id,Following_id: following_id})
 }

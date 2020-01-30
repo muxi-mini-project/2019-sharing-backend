@@ -19,7 +19,7 @@ func View(c *gin.Context){
     // }
 	Println(Token)
 	_ , error := model.Token_info(Token)
-	if error{
+	if !error{
 		c.JSON(401,gin.H{
 			"message":"wrong token",
 		})

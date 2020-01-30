@@ -16,7 +16,7 @@ func Image(c *gin.Context){
     // }
 	Println(Token)
 	_ , error := model.Token_info(Token)
-	if error{
+	if !error{
 		c.JSON(401,gin.H{
 			"message":"wrong token",
 		})
@@ -25,12 +25,12 @@ func Image(c *gin.Context){
 
 	var data model.User
 	data.User_id , _ = model.Token_info(Token)
-
+	
     if err := c.BindJSON(&data); err != nil {
         handler.SendBadRequest(c)
         return
 	}
-
+	
 	model.Image_modify(data.User_id,data.Image_url)
 
 	c.JSON(200, gin.H{

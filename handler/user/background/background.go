@@ -17,7 +17,7 @@ func Background(c *gin.Context){
     // }
 	Println(Token)
 	_ , error := model.Token_info(Token)
-	if error{
+	if !error{
 		c.JSON(401,gin.H{
 			"message":"wrong token",
 		})
@@ -26,13 +26,15 @@ func Background(c *gin.Context){
 
 	var data model.User
 	data.User_id , _ = model.Token_info(Token)
-
+	
     if err := c.BindJSON(&data); err != nil {
         handler.SendBadRequest(c)
         return
 	}
 
-	model.Background_modify(data.User_id,data.Background_url)
+	if err := model.Background_modify(data.User_id,data.Background_url);err !=nil{
+		Println("222")
+	}
 
 	c.JSON(200, gin.H{
 		"message": "Modify Background Successful!",

@@ -8,6 +8,7 @@ import (
     "github.com/jepril/sharing/handler/user/background"
     "github.com/jepril/sharing/handler/user/image"
     "github.com/jepril/sharing/handler/user/signture"
+    "github.com/jepril/sharing/handler/user/following"
 )
 var Router *gin.Engine
 
@@ -20,6 +21,7 @@ func InitRouter() {
     Router.PUT("/background", background.Background)
     Router.PUT("/image", image.Image)
     Router.PUT("/signture", signture.Signture)
+    Router.POST("/following", following.Following)
 
     return
 }
