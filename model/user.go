@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	//"fmt"
+	"fmt"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"log"
@@ -26,14 +26,20 @@ type accountReqeustParams struct {
 }
 
 type User struct{
-	User_id string	`json:"user_id"`
-	User_name	string	`json:"user_name"`
-	Password	string	`json:"password"`
-	Signture	string	`json:"signture"`
-	Image_url	string	`json:"image_url"`
-	Background_url	string	`json:"background_url"`
-	Fans_num	int	`json:"fans_num"`
-	Following_num	int	`json:"following_num"`
+	ID			int		`gorm:"id" json:"id"`
+	User_id 	string	`gorm:"user_id" json:"user_id"`
+	User_name	string	`gorm:"user_name" json:"user_name"`
+	Password	string	`gorm:"password" json:"password"`
+	Signture	string	`gorm:"signture" json:"signture"`
+	Image_url	string	`gorm:"image_url" json:"image_url"`
+	Background_url	string	`gorm:"background_url" json:"background_url"`
+	Fans_num	int	`gorm:"fans_num" json:"fans_num"`
+	Following_num	int	`gorm:"following_num" json:"following_num"`
+}
+
+type Following_fans struct{
+	Following_id	string	`json:"following_id"`
+	Fans_id			string	`json:"fans_id"`
 }
 
 //确认模拟登陆是否成功
@@ -207,16 +213,18 @@ func CreateToken(user_id string)string  {
 	var dataStr = string(dataByte)
 
 	//使用Claim保存json
-	//这里是个例子，并包含了一个故意签发一个已过期的token
-	data := jwt.StandardClaims{Subject:dataStr,ExpiresAt:time.Now().Unix()+100000000}
+	
+	data := jwt.StandardClaims{Subject:dataStr}
 	tokenInfo := jwt.NewWithClaims(jwt.SigningMethodHS256,data)
 	//生成token字符串
 	token,_ := tokenInfo.SignedString([]byte(keyInfo))
 	return token
 }
 
+
 func Viewing(user_id string) User {
 	var l User
+	fmt.Println(user_id)
     DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
 	
 	return l
@@ -239,19 +247,45 @@ func Token_info(Token string) (string,bool) {
 	
 	finToken := tokenInfo.Claims.(jwt.MapClaims)
 	//校验下token是否过期
-	succ := finToken.VerifyExpiresAt(time.Now().Unix(),true)
-	
+	succ := finToken.VerifyExpiresAt(time.Now().Unix()+100000,true)
+	fmt.Println("succ",succ)
 	var a string
 
 	if succ {
 		return  a,false
 	}else{
-		return finToken["sub"].(string),true
-		//return true
+		//fmt.Println(finToken["sub"])
+		return finToken["sub"].(string)[1:11],true
+		
 	}
 
 	//fmt.Println("succ",succ)
     //获取token中保存的用户信息
 	//fmt.Println(finToken["sub"])
 	//return finToken["sub"]
+}
+
+func Background_modify(user_id string,background_url string) error {
+	var tmpUser []User
+	//tmpUser.Background_url = background_url
+	//tmpUser.ID=2
+	if err :=DB.Self.Model(&tmpUser).Table("user").Where("user_id =?","2019213808").Update("background_url",background_url).Error;err !=nil{
+		return err
+	}
+	fmt.Println(user_id)
+	fmt.Println(background_url)
+	return nil
+}
+
+func Image_modify(user_id string,image_url string)  {
+	//DB.Self.First(&User{})
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})
+}
+
+func Signture_modify(user_id string,signture string)  {
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})
+}
+
+func CreateFollowing(fans_id string,following_id string) {
+	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id,Following_id: following_id})
 }

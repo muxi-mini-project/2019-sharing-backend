@@ -13,13 +13,13 @@ func View(c *gin.Context){
 	//var Token	string
 	
 	Token := c.Request.Header.Get("Token")
-	// if  err = nil	{
+	// if  Token = nil	{
     //     handler.SendBadRequest(c)
     //     return
     // }
 	Println(Token)
 	_ , error := model.Token_info(Token)
-	if error{
+	if !error{
 		c.JSON(401,gin.H{
 			"message":"wrong token",
 		})
