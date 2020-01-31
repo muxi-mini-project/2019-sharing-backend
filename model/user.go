@@ -26,14 +26,15 @@ type accountReqeustParams struct {
 }
 
 type User struct{
-	User_id string	`json:"user_id"`
-	User_name	string	`json:"user_name"`
-	Password	string	`json:"password"`
-	Signture	string	`json:"signture"`
-	Image_url	string	`json:"image_url"`
-	Background_url	string	`json:"background_url"`
-	Fans_num	int	`json:"fans_num"`
-	Following_num	int	`json:"following_num"`
+	ID			int		`gorm:"id" json:"id"`
+	User_id 	string	`gorm:"user_id" json:"user_id"`
+	User_name	string	`gorm:"user_name" json:"user_name"`
+	Password	string	`gorm:"password" json:"password"`
+	Signture	string	`gorm:"signture" json:"signture"`
+	Image_url	string	`gorm:"image_url" json:"image_url"`
+	Background_url	string	`gorm:"background_url" json:"background_url"`
+	Fans_num	int	`gorm:"fans_num" json:"fans_num"`
+	Following_num	int	`gorm:"following_num" json:"following_num"`
 }
 
 type Following_fans struct{
@@ -223,6 +224,7 @@ func CreateToken(user_id string)string  {
 
 func Viewing(user_id string) User {
 	var l User
+	fmt.Println(user_id)
     DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
 	
 	return l
@@ -253,7 +255,7 @@ func Token_info(Token string) (string,bool) {
 		return  a,false
 	}else{
 		//fmt.Println(finToken["sub"])
-		return finToken["sub"].(string),true
+		return finToken["sub"].(string)[1:11],true
 		
 	}
 
@@ -264,11 +266,14 @@ func Token_info(Token string) (string,bool) {
 }
 
 func Background_modify(user_id string,background_url string) error {
-
-	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Background_url: background_url}).Error;err !=nil{
+	var tmpUser []User
+	//tmpUser.Background_url = background_url
+	//tmpUser.ID=2
+	if err :=DB.Self.Model(&tmpUser).Table("user").Where("user_id =?","2019213808").Update("background_url",background_url).Error;err !=nil{
 		return err
 	}
-	fmt.Println("111")
+	fmt.Println(user_id)
+	fmt.Println(background_url)
 	return nil
 }
 

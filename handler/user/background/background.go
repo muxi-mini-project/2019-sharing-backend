@@ -26,7 +26,7 @@ func Background(c *gin.Context){
 
 	var data model.User
 	data.User_id , _ = model.Token_info(Token)
-	
+	//Println(data.User_id)
     if err := c.BindJSON(&data); err != nil {
         handler.SendBadRequest(c)
         return
@@ -34,6 +34,10 @@ func Background(c *gin.Context){
 
 	if err := model.Background_modify(data.User_id,data.Background_url);err !=nil{
 		Println("222")
+		c.JSON(403,gin.H{
+			"message":"wrong Mysql",
+		})
+		return
 	}
 
 	c.JSON(200, gin.H{
