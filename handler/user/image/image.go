@@ -1,9 +1,9 @@
 package image
 import (
-        "github.com/jepril/sharing/handler"
-        "github.com/jepril/sharing/model"
-		"github.com/gin-gonic/gin"
-		."fmt"	
+	"github.com/gin-gonic/gin"
+	."fmt"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler"
+	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
 
