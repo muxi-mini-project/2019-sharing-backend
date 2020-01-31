@@ -6,11 +6,7 @@ USE `muxi_sharing`;
 
 -- 用户信息
 CREATE TABLE `user` (
-<<<<<<< HEAD
-  `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-=======
   `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
   `user_id`        VARCHAR(15)  NOT NULL COMMENT   "学生学号" ,
   `user_name`      VARCHAR(20)  NOT NULL COMMENT   "用户昵称" ,
   `password`       VARCHAR(15)  NOT NULL COMMENT   "用户密码（一站式用户密码）" ,
@@ -50,11 +46,7 @@ CREATE TABLE `following_fans` (
   `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT ,
   `following_id`      VARCHAR(15)          NOT NULL COMMENT "主体用户学号" ,
   `fans_id`           VARCHAR(15)           NOT NULL COMMENT "粉丝学号" ,
-<<<<<<< HEAD
-	 
-=======
- 
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
+
   PRIMARY KEY (`id`) ,
   KEY `following_id` (`following_id`),
   KEY `fans_id` (`fans_id`)
@@ -79,11 +71,7 @@ CREATE TABLE `file_downloader` (
   `downloader_id`  VARCHAR(15)   NOT NULL COMMENT "下载文件的用户ID" ,
   `file_id`      INT    NOT NULL COMMENT "被下载的文件ID" ,
   `download_time`    varchar(30)     NOT NULL COMMENT "下载时间" ,
-<<<<<<< HEAD
-	 
-=======
- 
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
+
   PRIMARY KEY (`id`) ,
   KEY `downloader_id` (`downloader_id`) ,
   KEY `file_id` (`file_id`) ,
@@ -96,10 +84,6 @@ CREATE TABLE `file_collecter` (
   `collecter_id`  VARCHAR(15)     NOT NULL COMMENT "收藏文件的用户ID" ,
   `file_id`       INT    NOT NULL COMMENT "被收藏的文件ID" ,
   `collect_time`    varchar(30)       NOT NULL COMMENT "收藏时间" ,
-<<<<<<< HEAD
-=======
-
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
 
   PRIMARY KEY (`id`) ,
   KEY `collecter_id` (`collecter_id`) ,
@@ -113,10 +97,6 @@ CREATE TABLE `message` (
   `writer_id`    VARCHAR(15)    NOT NULL COMMENT "写留言的人id" ,
   `host_id`      VARCHAR(15)   NOT NULL COMMENT "留言版主人id" ,
   `write_time`     varchar(30)      NOT NULL COMMENT "写留言时间" ,
-<<<<<<< HEAD
-=======
-
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
 
   PRIMARY KEY (`id`) ,
   KEY `host_id` (`host_id`) 
@@ -127,16 +107,8 @@ CREATE TABLE `likes` (
   `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
   `user_id`    VARCHAR(15)    NOT NULL COMMENT "点赞的人id" ,
   `file_id`      INT   NOT NULL COMMENT "文件id" ,
-<<<<<<< HEAD
-=======
-
 
   PRIMARY KEY (`id`) ,
   KEY `user_id` (`user_id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
->>>>>>> 195cf82936ddb37e0d509cff13c7fd8e78884d84
-
-  PRIMARY KEY (`id`) ,
-  KEY `user_id` (`user_id`) 
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
