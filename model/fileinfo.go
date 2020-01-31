@@ -24,7 +24,7 @@ func CreateNewfile(tmpfile File) bool {
      tmpfile.CollcetNumber = 0
      tmpfile.DownloadNumber = 0
      tmpfile.Grade = 0
-     if err := Db.Self.Model(&File{}).Create(&tmpfile).Error; err != nil {
+     if err := DB.Self.Model(&File{}).Create(&tmpfile).Error; err != nil {
           log.Print("数据库创建数据失败")
           log.Println(err)
           return false
@@ -34,12 +34,12 @@ func CreateNewfile(tmpfile File) bool {
 
 func Deletefile(fileid int) bool {
      var tmpfile File
-     if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).First(&tmpfile).Error; err != nil {
+     if err := DB.Self.Model(&File{}).Where(&File{FileId:fileid}).First(&tmpfile).Error; err != nil {
           log.Print("查无此数据 ")
           log.Println(err)
           return false
      }
-     if err := Db.Self.Model(&File{}).Where(&File{FileId:fileid}).Delete(&File{}).Error; err != nil {
+     if err := DB.Self.Model(&File{}).Where(&File{FileId:fileid}).Delete(&File{}).Error; err != nil {
           log.Print("删除失败")
           log.Println(err)
           return false

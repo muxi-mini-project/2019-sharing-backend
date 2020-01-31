@@ -2,6 +2,7 @@ package router
 
 import (
     "github.com/gin-gonic/gin"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler"
     "github.com/muxi-mini-project/2020-sharing-backend/handler/user/background"
     "github.com/muxi-mini-project/2020-sharing-backend/handler/user/following"
     "github.com/muxi-mini-project/2020-sharing-backend/handler/user/image"
@@ -15,6 +16,7 @@ var Router *gin.Engine
 
 func InitRouter() {
     Router = gin.Default()
+
     Router.POST("/login", login.Login)
     Router.POST("/register", register.Register)
     Router.GET("/view", view.View)
@@ -22,6 +24,11 @@ func InitRouter() {
     Router.PUT("/image", image.Image)
     Router.PUT("/signture", signture.Signture)
     Router.POST("/following", following.Following)
+
+    Router.GET("/file:fileid", handler.GetFileInfo)
+    Router.DELETE("/file", handler.DeleteFile)
+
+
 
     return
 }
