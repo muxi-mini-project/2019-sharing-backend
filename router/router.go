@@ -2,13 +2,13 @@ package router
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/jepril/sharing/handler/user/register"
-    "github.com/jepril/sharing/handler/user/login"
-    "github.com/jepril/sharing/handler/user/view"
-    "github.com/jepril/sharing/handler/user/background"
-    "github.com/jepril/sharing/handler/user/image"
-    "github.com/jepril/sharing/handler/user/signture"
-    "github.com/jepril/sharing/handler/user/following"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/background"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/following"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/image"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/login"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/register"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/signture"
+    "github.com/muxi-mini-project/2020-sharing-backend/handler/user/view"
 )
 var Router *gin.Engine
 
