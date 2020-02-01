@@ -1,8 +1,10 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/net/publicsuffix"
 	"io/ioutil"
 	"log"
@@ -12,8 +14,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-	"github.com/dgrijalva/jwt-go"
-	"encoding/json"
 )
 
 //结构体
@@ -25,32 +25,32 @@ type accountReqeustParams struct {
 	JSESSIONID string
 }
 
-type User struct{
-	ID			int		`gorm:"id" json:"id"`
-	User_id 	string	`gorm:"user_id" json:"user_id"`
-	User_name	string	`gorm:"user_name" json:"user_name"`
-	Password	string	`gorm:"password" json:"password"`
-	Signture	string	`gorm:"signture" json:"signture"`
-	Image_url	string	`gorm:"image_url" json:"image_url"`
-	Background_url	string	`gorm:"background_url" json:"background_url"`
-	Fans_num	int	`gorm:"fans_num" json:"fans_num"`
-	Following_num	int	`gorm:"following_num" json:"following_num"`
+type User struct {
+	ID             int    `gorm:"id" json:"id"`
+	User_id        string `gorm:"user_id" json:"user_id"`
+	User_name      string `gorm:"user_name" json:"user_name"`
+	Password       string `gorm:"password" json:"password"`
+	Signture       string `gorm:"signture" json:"signture"`
+	Image_url      string `gorm:"image_url" json:"image_url"`
+	Background_url string `gorm:"background_url" json:"background_url"`
+	Fans_num       int    `gorm:"fans_num" json:"fans_num"`
+	Following_num  int    `gorm:"following_num" json:"following_num"`
 }
 
-type Following_fans struct{
-	Following_id	string	`json:"following_id"`
-	Fans_id			string	`json:"fans_id"`
+type Following_fans struct {
+	Following_id string `json:"following_id"`
+	Fans_id      string `json:"fans_id"`
 }
 
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
-	params,err := makeAccountPreflightRequest()
+	params, err := makeAccountPreflightRequest()
 	if err != nil {
 		log.Println(err)
 		return false
 	}
 
-	jar,err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil {
 		log.Println(err)
 		return false
@@ -60,7 +60,7 @@ func ConfirmUser(sid string, pwd string) bool {
 		Jar:     jar,
 	}
 	//fmt.Println(params)
-	result := makeAccountRequest( sid, pwd, params, &client)
+	result := makeAccountRequest(sid, pwd, params, &client)
 
 	return result
 }
@@ -168,7 +168,6 @@ func makeAccountRequest(sid, password string, params *accountReqeustParams, clie
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
 
-
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Print(err)
@@ -194,82 +193,78 @@ func makeAccountRequest(sid, password string, params *accountReqeustParams, clie
 }
 
 //注册用户
-func CreateUser(user_id string,user_name string,password string) {
-	DB.Self.Model(&User{}).Create(&User{User_id: user_id,User_name: user_name,Password: password})
+func CreateUser(user_id string, user_name string, password string) {
+	DB.Self.Model(&User{}).Create(&User{User_id: user_id, User_name: user_name, Password: password})
 }
 
 func CheckUserByUser_id(user_id string) bool {
-    var l User
-    res := DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
+	var l User
+	res := DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
 	if res.RecordNotFound() {
 		return false
 	}
 	return true
 }
 
-func CreateToken(user_id string)string  {
+func CreateToken(user_id string) string {
 	keyInfo := "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()"
-	dataByte,_:= json.Marshal(user_id)
+	dataByte, _ := json.Marshal(user_id)
 	var dataStr = string(dataByte)
 
 	//使用Claim保存json
-	
-	data := jwt.StandardClaims{Subject:dataStr}
-	tokenInfo := jwt.NewWithClaims(jwt.SigningMethodHS256,data)
+
+	data := jwt.StandardClaims{Subject: dataStr}
+	tokenInfo := jwt.NewWithClaims(jwt.SigningMethodHS256, data)
 	//生成token字符串
-	token,_ := tokenInfo.SignedString([]byte(keyInfo))
+	token, _ := tokenInfo.SignedString([]byte(keyInfo))
 	return token
 }
-
 
 func Viewing(user_id string) User {
 	var l User
 	fmt.Println(user_id)
-    DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
-	
+	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
+
 	return l
 }
 
-func Token_info(Token string) (string,bool) {
+func Token_info(Token string) (string, bool) {
 	keyInfo := "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()"
 	//将token字符串转换为token对象（结构体更确切点吧，go很孤单，没有对象。。。）
-	tokenInfo , _ := jwt.Parse(Token, func(token *jwt.Token) (i interface{}, e error) {
-		return keyInfo,nil
+	tokenInfo, _ := jwt.Parse(Token, func(token *jwt.Token) (i interface{}, e error) {
+		return keyInfo, nil
 	})
 
-	
 	//校验错误（基本）
 	err := tokenInfo.Claims.Valid()
-	if err!=nil{
+	if err != nil {
 		println(err.Error())
-		return err.Error(),false
+		return err.Error(), false
 	}
-	
+
 	finToken := tokenInfo.Claims.(jwt.MapClaims)
 	//校验下token是否过期
-	succ := finToken.VerifyExpiresAt(time.Now().Unix()+100000,true)
-	fmt.Println("succ",succ)
+	succ := finToken.VerifyExpiresAt(time.Now().Unix()+100000, true)
 	var a string
-
 	if succ {
-		return  a,false
-	}else{
+		return a, false
+	} else {
 		//fmt.Println(finToken["sub"])
-		return finToken["sub"].(string)[1:11],true
-		
+		return finToken["sub"].(string)[1:11], true
+
 	}
 
 	//fmt.Println("succ",succ)
-    //获取token中保存的用户信息
+	//获取token中保存的用户信息
 	//fmt.Println(finToken["sub"])
 	//return finToken["sub"]
 }
 
-func Background_modify(user_id string,background_url string) error {
+func Background_modify(user_id string, background_url string) error {
 	var tmpUser []User
 	//tmpUser.Background_url = background_url
 	//tmpUser.ID=2
-	if err :=DB.Self.Model(&tmpUser).Table("user").Where("user_id =?","2019213808").Update("background_url",background_url).Error;err !=nil{
+	if err := DB.Self.Model(&tmpUser).Table("user").Where("user_id =?", "2019213808").Update("background_url", background_url).Error; err != nil {
 		return err
 	}
 	fmt.Println(user_id)
@@ -277,15 +272,15 @@ func Background_modify(user_id string,background_url string) error {
 	return nil
 }
 
-func Image_modify(user_id string,image_url string)  {
+func Image_modify(user_id string, image_url string) {
 	//DB.Self.First(&User{})
 	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})
 }
 
-func Signture_modify(user_id string,signture string)  {
+func Signture_modify(user_id string, signture string) {
 	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})
 }
 
-func CreateFollowing(fans_id string,following_id string) {
-	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id,Following_id: following_id})
+func CreateFollowing(fans_id string, following_id string) {
+	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id, Following_id: following_id})
 }

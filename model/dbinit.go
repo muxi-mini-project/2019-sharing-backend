@@ -18,7 +18,7 @@ type Database struct {
 var DB *Database
 
 func getDatabase() (*gorm.DB, error) {
-	db, err := gorm.Open("mysql",dns)
+	db, err := gorm.Open("mysql", dns)
 	if err != nil {
 		fmt.Print("getDatabase")
 		log.Println(err)
@@ -32,7 +32,7 @@ func (db *Database) Init() {
 	if err != nil {
 
 	}
-	DB = &Database{Self:newDb}
+	DB = &Database{Self: newDb}
 }
 
 func (db *Database) Close() {
