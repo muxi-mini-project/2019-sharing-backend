@@ -5,7 +5,7 @@ import (
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
-func Register(c *gin.Context)  {
+func Register(c *gin.Context) {
 	var data model.User
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
@@ -13,23 +13,23 @@ func Register(c *gin.Context)  {
 		})
 		return
 	}
-	
+
 	if model.CheckUserByUser_id(data.User_id) {
-        c.JSON(401, gin.H{
-            "message": "User Already Existed!",
-        })
-        return
-    }
+		c.JSON(401, gin.H{
+			"message": "User Already Existed!",
+		})
+		return
+	}
 
 	if model.ConfirmUser(data.User_id, data.Password) {
 		model.CreateUser(data.User_id, data.User_name, data.Password)
-	}else{
+	} else {
 		c.JSON(401, gin.H{
 			"message": "wrong id or password",
 		})
 		return
 	}
-	
+
 	c.JSON(200, gin.H{
 		"message": "Create Student Successful!",
 	})

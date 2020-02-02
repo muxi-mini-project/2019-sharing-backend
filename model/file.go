@@ -76,3 +76,15 @@ func CreateNewUploadRecord(fileid int, uploaderid string) bool {
 	}
 	return true
 }
+
+func Like(fileid int, userid string) bool {
+	var tmprecord Likes
+	tmprecord.FileId = fileid
+	tmprecord.UserId = userid
+	if err := DB.Self.Model(&Likes{}).Create(&tmprecord).Error; err != nil {
+		log.Println(err)
+		log.Print("记录创建失败")
+		return false
+	}
+	return true
+}
