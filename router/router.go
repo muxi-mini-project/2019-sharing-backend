@@ -34,7 +34,7 @@ func InitRouter() {
     Router.POST("/file/like", handler.Like)
 	Router.DELETE("/file/unlike", handler.Unlike)
 	Router.POST("/message/upload", handler.LeaveMessage)
-	Router.GET("/message/:hostid",handler.GetMessageInfoByhostid)
+	Router.GET("/message",handler.GetMessageInfoByhostid)
 
 	return
 }

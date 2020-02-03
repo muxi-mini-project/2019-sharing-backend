@@ -12,6 +12,13 @@ type note struct {
 	Content  string `json:"message"`
 }
 
+type messagelist struct {
+	writerid string
+	content string
+	image_url string
+	time string
+}
+
 func LeaveMessage(c *gin.Context){
 	var tmpnote note
 	var tmpuser model.User
@@ -46,6 +53,9 @@ func LeaveMessage(c *gin.Context){
 
 func GetMessageInfoByhostid(c *gin.Context) {
 	var tmpuser model.User
+	var tmpnote []model.Message
+	var tmpmessage []messagelist
+	var note messagelist
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
 	key, _ := model.Token_info(token)
@@ -56,6 +66,30 @@ func GetMessageInfoByhostid(c *gin.Context) {
 		})
 		return
 	}
-	hostid, _ := strconv.Atoi(c.Param("hostid"))
-	
+	//defaultValue为默认值，在defaultquery没有传入值时使用defaultvalue的默认值
+	hostid := c.DefaultQuery("hostid", "")
+	page, _ := strconv.Atoi(c.DefaultQuery("page","1"))
+	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
+	sum := (page - 1) * pagesize
+    if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId:hostid}).Offset(sum).Find(&tmpnote); err != nil {
+    	log.Println(err)
+    	log.Print("")
+    	c.JSON(400, gin.H{
+    		"message" : "传入参数不全" ,
+		})
+		return
+	}
+	//i记录序号，j表示内容
+	for _, j := range tmpnote {
+		note.content = j.Content
+		note.writerid = j.WriterId
+		note.time = j.WriteTime
+		model.DB.Self.Model(&model.User{}).Where(&model.User{User_id:j.WriterId}).First(&tmpuser)
+		note.image_url = tmpuser.Image_url
+		tmpmessage = append(tmpmessage, note)
+	}
+    c.JSON(200, gin.H{
+    	"message" : "操作成功",
+    	"message_list": tmpmessage,
+	})
 }
