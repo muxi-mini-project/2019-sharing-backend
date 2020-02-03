@@ -83,7 +83,7 @@ CREATE TABLE `file_collecter` (
   `id`              INT UNSIGNED   NOT NULL AUTO_INCREMENT ,
   `collecter_id`  VARCHAR(15)     NOT NULL COMMENT "收藏文件的用户ID" ,
   `file_id`       INT    NOT NULL COMMENT "被收藏的文件ID" ,
-  `collect_time`    varchar(30)       NOT NULL COMMENT "收藏时间" ,
+  `collect_time`    VARCHAR(30)       NOT NULL COMMENT "收藏时间" ,
 
   PRIMARY KEY (`id`) ,
   KEY `collecter_id` (`collecter_id`) ,
@@ -97,6 +97,7 @@ CREATE TABLE `message` (
   `writer_id`    VARCHAR(15)    NOT NULL COMMENT "写留言的人id" ,
   `host_id`      VARCHAR(15)   NOT NULL COMMENT "留言版主人id" ,
   `write_time`     varchar(30)      NOT NULL COMMENT "写留言时间" ,
+  `content`      VARCHAR(256)  NOT NULL COMMENT "留言内容",
 
   PRIMARY KEY (`id`) ,
   KEY `host_id` (`host_id`) 
