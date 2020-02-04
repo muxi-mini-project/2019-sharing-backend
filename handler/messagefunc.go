@@ -1,6 +1,6 @@
 package handler
 
-import(
+import (
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
 	"log"
@@ -8,18 +8,18 @@ import(
 )
 
 type note struct {
-	Hostid string `json:"host_id"`
-	Content  string `json:"message"`
+	Hostid  string `json:"host_id"`
+	Content string `json:"message"`
 }
 
 type messagelist struct {
-	writerid string
-	content string
+	writerid  string
+	content   string
 	image_url string
-	time string
+	time      string
 }
 
-func LeaveMessage(c *gin.Context){
+func LeaveMessage(c *gin.Context) {
 	var tmpnote note
 	var tmpuser model.User
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
@@ -39,10 +39,10 @@ func LeaveMessage(c *gin.Context){
 		})
 		return
 	}
-	if err := model.CreateNewMessage(key,tmpnote.Hostid,tmpnote.Content); !err {
+	if err := model.CreateNewMessage(key, tmpnote.Hostid, tmpnote.Content); !err {
 		log.Print("无法留言")
 		c.JSON(404, gin.H{
-			"message" : "留言失败！",
+			"message": "留言失败！",
 		})
 		return
 	}
@@ -68,14 +68,14 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	}
 	//defaultValue为默认值，在defaultquery没有传入值时使用defaultvalue的默认值
 	hostid := c.DefaultQuery("hostid", "")
-	page, _ := strconv.Atoi(c.DefaultQuery("page","1"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
 	sum := (page - 1) * pagesize
-    if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId:hostid}).Offset(sum).Find(&tmpnote); err != nil {
-    	log.Println(err)
-    	log.Print("")
-    	c.JSON(400, gin.H{
-    		"message" : "传入参数不全" ,
+	if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId: hostid}).Offset(sum).Limit(pagesize).Find(&tmpnote); err != nil {
+		log.Println(err)
+		log.Print("")
+		c.JSON(400, gin.H{
+			"message": "传入参数不全",
 		})
 		return
 	}
@@ -84,12 +84,12 @@ func GetMessageInfoByhostid(c *gin.Context) {
 		note.content = j.Content
 		note.writerid = j.WriterId
 		note.time = j.WriteTime
-		model.DB.Self.Model(&model.User{}).Where(&model.User{User_id:j.WriterId}).First(&tmpuser)
+		model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: j.WriterId}).First(&tmpuser)
 		note.image_url = tmpuser.Image_url
 		tmpmessage = append(tmpmessage, note)
 	}
-    c.JSON(200, gin.H{
-    	"message" : "操作成功",
-    	"message_list": tmpmessage,
+	c.JSON(200, gin.H{
+		"message":      "操作成功",
+		"message_list": tmpmessage,
 	})
 }

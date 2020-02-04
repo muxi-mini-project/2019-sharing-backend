@@ -4,11 +4,12 @@ import (
 	"log"
 	"time"
 )
+
 type Message struct {
-	WriterId string  `gorm:"writer_id"`
-	HostId   string  `gorm:"host_id"`
+	WriterId  string `gorm:"writer_id"`
+	HostId    string `gorm:"host_id"`
 	WriteTime string `gorm:"write_time"`
-	Content string   `gorm:"content"`
+	Content   string `gorm:"content"`
 }
 
 func CreateNewMessage(writerid string, hostid string, content string) bool {

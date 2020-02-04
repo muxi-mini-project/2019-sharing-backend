@@ -31,10 +31,12 @@ func InitRouter() {
 	Router.POST("/file/download", handler.DownloadFile)
 	Router.POST("/file/collect", handler.Collect)
 	Router.DELETE("/file/unfavorite", handler.Unfavourite)
-    Router.POST("/file/like", handler.Like)
+	Router.POST("/file/like", handler.Like)
 	Router.DELETE("/file/unlike", handler.Unlike)
 	Router.POST("/message/upload", handler.LeaveMessage)
-	Router.GET("/message",handler.GetMessageInfoByhostid)
+	Router.GET("/message", handler.GetMessageInfoByhostid)
+	Router.GET("/file/searching/Thelatest", handler.FileSearchingByuploadtime)
+	Router.GET("/file/searching/Thepopular", handler.FileSearchingBydownloadnums)
 
 	return
 }

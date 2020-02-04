@@ -7,6 +7,13 @@ import (
 	"strconv"
 )
 
+type tmp struct {
+	College string `json:"college"`
+	Subject string `json:"subject"`
+	Format  string `json:"format"`
+	Type    string `json:"type"`
+}
+
 func UploadFile(c *gin.Context) {
 	var tmpfile model.File
 	var tmpuser model.User
@@ -30,16 +37,17 @@ func UploadFile(c *gin.Context) {
 	}
 	//建立新的记录，检验成功与否
 	if err := model.CreateNewfile(tmpfile); !err {
-		log.Println("未建立成功")
+		log.Print("建立数据失败")
 		c.JSON(404, gin.H{
-			"message": "未找到或上传失败",
+			"message": "建立数据失败",
 		})
 		return
 	}
-    if err := model.CreateNewUploadRecord(tmpfile.FileId, key); !err {
-    	log.Print("上传无法记录")
-    	c.JSON(404, gin.H{
-    		"message" : "上传行为无法被记录！",
+
+	if err := model.CreateNewUploadRecord(tmpfile.FileId, key); !err {
+		log.Print("上传无法记录")
+		c.JSON(404, gin.H{
+			"message": "上传行为无法被记录！",
 		})
 		return
 	}
@@ -141,7 +149,7 @@ func DownloadFile(c *gin.Context) {
 	if err := model.CreateNewDownloadRecord(tmpfile.FileId, key); !err {
 		log.Print("下载无法记录")
 		c.JSON(404, gin.H{
-			"message" : "下载行为无法被记录！",
+			"message": "下载行为无法被记录！",
 		})
 		return
 	}
@@ -183,7 +191,7 @@ func Collect(c *gin.Context) {
 	if err := model.CreateNewCollectRecord(tmpfile.FileId, key); !err {
 		log.Print("收藏无法记录")
 		c.JSON(404, gin.H{
-			"message" : "收藏行为无法被记录！",
+			"message": "收藏行为无法被记录！",
 		})
 		return
 	}
@@ -198,7 +206,7 @@ func Unfavourite(c *gin.Context) {
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
 	key, _ := model.Token_info(token)
-	if err := model.DB.Self.Model(&model.File_collecter{}).Where(&model.File_collecter{CollecterId: key,FileId:a}).First(&tmpuser).Error; err != nil {
+	if err := model.DB.Self.Model(&model.File_collecter{}).Where(&model.File_collecter{CollecterId: key, FileId: a}).First(&tmpuser).Error; err != nil {
 		log.Println(err)
 		c.JSON(401, gin.H{
 			"message": "身份认证错误，请先登录或注册！",
@@ -212,10 +220,10 @@ func Unfavourite(c *gin.Context) {
 		})
 		return
 	}
-	if err := model.DB.Self.Model(&model.File_collecter{}).Delete(&model.File_collecter{FileId:a, CollecterId:key}); err != nil {
-        log.Println(err)
-        c.JSON(404, gin.H{
-        	"message" : "未找到或取消收藏失败！",
+	if err := model.DB.Self.Model(&model.File_collecter{}).Delete(&model.File_collecter{FileId: a, CollecterId: key}); err != nil {
+		log.Println(err)
+		c.JSON(404, gin.H{
+			"message": "未找到或取消收藏失败！",
 		})
 		return
 	}
@@ -224,7 +232,7 @@ func Unfavourite(c *gin.Context) {
 	})
 }
 
-func Like(c *gin.Context){
+func Like(c *gin.Context) {
 	var a int
 	var tmpuser model.User
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
@@ -247,7 +255,7 @@ func Like(c *gin.Context){
 	if err := model.Like(a, key); !err {
 		log.Print("点赞无法记录")
 		c.JSON(404, gin.H{
-			"message" : "点赞行为无法被记录！",
+			"message": "点赞行为无法被记录！",
 		})
 		return
 	}
@@ -257,11 +265,11 @@ func Like(c *gin.Context){
 }
 
 func Unlike(c *gin.Context) {
-    var a int
-    var tmprecord model.Likes
+	var a int
+	var tmprecord model.Likes
 	token := c.Request.Header.Get("token")
 	key, _ := model.Token_info(token)
-	if err := model.DB.Self.Model(&model.Likes{}).Where(&model.Likes{UserId: key,FileId:a}).First(&tmprecord).Error; err != nil {
+	if err := model.DB.Self.Model(&model.Likes{}).Where(&model.Likes{UserId: key, FileId: a}).First(&tmprecord).Error; err != nil {
 		log.Println(err)
 		c.JSON(401, gin.H{
 			"message": "身份认证错误，请先登录或注册！",
@@ -275,10 +283,10 @@ func Unlike(c *gin.Context) {
 		})
 		return
 	}
-	if err := model.DB.Self.Model(&model.Likes{}).Delete(&model.Likes{FileId:a, UserId:key}); err != nil {
+	if err := model.DB.Self.Model(&model.Likes{}).Delete(&model.Likes{FileId: a, UserId: key}); err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
-			"message" : "未找到或取消点赞失败！",
+			"message": "未找到或取消点赞失败！",
 		})
 		return
 	}
@@ -287,37 +295,73 @@ func Unlike(c *gin.Context) {
 	})
 }
 
+func FileSearchingByuploadtime(c *gin.Context) {
+	var tmp tmp
+	var files []model.File
+	var count int
+	if err := c.BindJSON(&tmp); err != nil {
+		log.Println(err)
+		c.JSON(400, gin.H{
+			"message": "Bad Request!",
+		})
+		return
+	}
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
+	sum := (page - 1) * pagesize
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count); err != nil {
+		log.Println(err)
+		log.Print("获取总数失败")
+		return
+	}
+	i := count - sum
+	if i < 0 {
+		i = -1
+	}
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(i).Limit(pagesize).Find(&files); err != nil {
+		log.Println(err)
+		log.Print("获取数据失败")
+		c.JSON(400, gin.H{
+			"message": "数据获取失败",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "获取成功",
+		"file":    files,
+	})
+}
 
+func FileSearchingBydownloadnums(c *gin.Context) {
+	var tmp tmp
+	var files []model.File
+	var count int
+	if err := c.BindJSON(&tmp); err != nil {
+		log.Println(err)
+		c.JSON(400, gin.H{
+			"message": "Bad Request!",
+		})
+		return
+	}
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count); err != nil {
+		log.Println(err)
+		log.Print("获取总数失败")
+		return
+	}
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
+	sum2 := (page - 1) * pagesize
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if err := model.DB.Self.Model(&model.File{}).Order("download_num desc").Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(sum2).Limit(pagesize).Find(&files); err != nil {
+		log.Println(err)
+		log.Print("获取数据失败")
+		c.JSON(400, gin.H{
+			"message": "数据获取失败",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "获取成功",
+		"file":    files,
+	})
+}
