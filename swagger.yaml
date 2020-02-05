@@ -313,12 +313,12 @@ paths:
               msg:
                 type: string  
                 
-  /user/user_id/follower/:
+  /user/user_id/following_list/:
     get:
       tags:
         - user
-      summary: follower列表和动态
-      description: get the follower list
+      summary: following列表和动态
+      description: get the following list
       #operationId: uploadFile
       produces:
         - application/json
@@ -327,10 +327,14 @@ paths:
           in: header
           required: true
           type: string
-        - name: user_id
-          in: path
-          required: true
-          type: integer
+        - name: data
+          in: body
+          schema:
+            required:
+              - user_id
+            properties:
+              follower_id:
+                type: integer
       responses:
         '200':
           description: successful operation
@@ -449,10 +453,14 @@ paths:
           in: header
           required: true
           type: string
-        - name: user_id
-          in: path
-          required: true
-          type: integer  
+        - name: data
+          in: body
+          schema:
+            required:
+              - use_id
+            properties:
+              follower_id:
+                type: integer
       responses:
         '200':
           description: successful operation
