@@ -308,7 +308,7 @@ func FileSearchingByuploadtime(c *gin.Context) {
 	}
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
-	sum := (page - 1) * pagesize
+	sum := page * pagesize
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count); err != nil {
 		log.Println(err)
 		log.Print("获取总数失败")
@@ -335,7 +335,6 @@ func FileSearchingByuploadtime(c *gin.Context) {
 func FileSearchingBydownloadnums(c *gin.Context) {
 	var tmp tmp
 	var files []model.File
-	var count int
 	if err := c.BindJSON(&tmp); err != nil {
 		log.Println(err)
 		c.JSON(400, gin.H{
@@ -343,16 +342,10 @@ func FileSearchingBydownloadnums(c *gin.Context) {
 		})
 		return
 	}
-	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count); err != nil {
-		log.Println(err)
-		log.Print("获取总数失败")
-		return
-	}
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
-	sum2 := (page - 1) * pagesize
-
-	if err := model.DB.Self.Model(&model.File{}).Order("download_num desc").Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(sum2).Limit(pagesize).Find(&files); err != nil {
+	sum := (page - 1) * pagesize
+	if err := model.DB.Self.Model(&model.File{}).Order("download_num desc").Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(sum).Limit(pagesize).Find(&files); err != nil {
 		log.Println(err)
 		log.Print("获取数据失败")
 		c.JSON(400, gin.H{
