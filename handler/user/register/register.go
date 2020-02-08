@@ -2,7 +2,7 @@ package register
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/muxi-mini-project/2020-sharing-backend/model"
+	"github.com/jepril/sharing/model"
 )
 
 func Register(c *gin.Context) {
