@@ -3,8 +3,7 @@ package image
 import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jepril/sharing/handler"
-	"github.com/jepril/sharing/model"
+
 )
 
 func Image(c *gin.Context) {

@@ -43,21 +43,6 @@ type Following_fans struct {
 	Fans_id      string `json:"fans_id"`
 }
 
-type File struct{
-	File_id		int			`gorm:"file_id" json:"file_id"`
-	File_url	string		`gorm:"file_url" json:"file_url"`
-	File_name	string		`gorm:"file_name" json:"file_name"`
-	Format		string		`gorm:"format" json:"format"`
-	Content		string		`gorm:"content" json:"content"`
-	Subject		string		`gorm:"subject" json:"subject"`
-	College		string		`gorm:"college" json:"college"`
-	Type		string		`gorm:"type" json:"type"`
-	Grade		int			`gorm:"grade" json:"grade"`
-	Like_num	int			`gorn:"like_num" json:"like_num"`
-	Collect_num	int			`gorm:"collect_num" json:"collect_num"`
-	Download_num int		`gorm:"download_num" json:"download"`
-}
-
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
 	params, err := makeAccountPreflightRequest()

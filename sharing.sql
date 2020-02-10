@@ -34,6 +34,7 @@ CREATE TABLE `file` (
   `like_num`       INT          NOT NULL DEFAULT 0 COMMENT "点赞数" ,
   `collect_num`    INT          NOT NULL DEFAULT 0 COMMENT "收藏数" ,
   `download_num`   INT          NOT NULL DEFAULT 0 COMMENT "下载数" ,
+  `scored`         INT          NOT NULL DEFAULT 0 COMMENT "已评论人数" ,
 
   PRIMARY KEY (`file_id`) ,
   KEY `file_name` (`file_name`) ,
@@ -84,11 +85,13 @@ CREATE TABLE `file_collecter` (
   `collecter_id`  VARCHAR(15)     NOT NULL COMMENT "收藏文件的用户ID" ,
   `file_id`       INT    NOT NULL COMMENT "被收藏的文件ID" ,
   `collect_time`    VARCHAR(30)       NOT NULL COMMENT "收藏时间" ,
+  `collectlist_id`  INT  NOT NULL COMMENT "收藏夹id" ,
 
   PRIMARY KEY (`id`) ,
   KEY `collecter_id` (`collecter_id`) ,
   KEY `file_id` (`file_id`) ,
-  KEY `collect_time` (`collect_time`)
+  KEY `collect_time` (`collect_time`),
+  KEY `collectlist_id` (`collectlist_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- 留言中间表
@@ -111,5 +114,25 @@ CREATE TABLE `likes` (
 
   PRIMARY KEY (`id`) ,
   KEY `user_id` (`user_id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+CREATE TABLE `score` (
+  `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
+  `user_id`        VARCHAR(15)   NOT NULL COMMENT "点赞的人id" ,
+  `file_id`        INT   NOT NULL COMMENT "文件id" ,
+  `score`          INT   NOT NULL COMMENT DEFAULT 0 "文件单次评分" ,
+
+  PRIMARY KEY (`id`) ,
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+CREATE TABLE `collect_list` (
+  `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `collectlist_id`     INT UNSIGNED NOT NULL COMMENT "收藏夹编号" ,
+  `collectlist_name`   VARCHAR(30)   NOT NULL COMMENT  "收藏夹昵称" ,
+  `user_id`        INT UNSIGNED NOT NULL COMMENT "收藏夹所属用户" ,
+
+  PRIMARY KEY (`id`) ,
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 

@@ -3,8 +3,8 @@ package background
 import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jepril/sharing/handler"
-	"github.com/jepril/sharing/model"
+	"github.com/muxi-mini-project/2020-sharing-backend/model"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 )
 
 func Background(c *gin.Context) {
@@ -27,7 +27,7 @@ func Background(c *gin.Context) {
 	data.User_id, _ = model.Token_info(Token)
 	//Println(data.User_id)
 	if err := c.BindJSON(&data); err != nil {
-		handler.SendBadRequest(c)
+		SendBadRequest(c)
 		return
 	}
 

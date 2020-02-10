@@ -2,20 +2,20 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jepril/sharing/handler"
-	"github.com/jepril/sharing/handler/user/background"
-	"github.com/jepril/sharing/handler/user/following"
-	"github.com/jepril/sharing/handler/user/image"
-	"github.com/jepril/sharing/handler/user/login"
-	"github.com/jepril/sharing/handler/user/register"
-	"github.com/jepril/sharing/handler/user/signture"
-	"github.com/jepril/sharing/handler/user/view"
-	"github.com/jepril/sharing/handler/user/collection_list"
-	"github.com/jepril/sharing/handler/user/deletion"
-	"github.com/jepril/sharing/handler/user/down_list"
-	"github.com/jepril/sharing/handler/user/fans"
-	"github.com/jepril/sharing/handler/user/following_list"
-	"github.com/jepril/sharing/handler/user/up_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/background"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/collection_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/deletion"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/down_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/fans"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/following"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/following_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/login"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/register"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/signture"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/up_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/view"
+
 )
 
 var Router *gin.Engine
@@ -36,6 +36,20 @@ func InitRouter() {
 	Router.GET("/fans", fans.Fans)
 	Router.GET("/following_list", following_list.FollowingList)
 	Router.DELETE("/deletion", deletion.Deletion)
+
+	Router.POST("/file/upload", handler.UploadFile)
+	Router.GET("/file:fileid", handler.GetFileInfo)
+	Router.DELETE("/file/delete", handler.DeleteFile)
+	Router.POST("/file/download", handler.DownloadFile)
+	Router.POST("/file/collect", handler.Collect)
+	Router.DELETE("/file/unfavorite" , handler.Unfavourite)
+	Router.POST("/file/like", handler.Like)
+	Router.DELETE("/file/unlike", handler.Unlike)
+	Router.GET("/file/searching/thepopular", handler.FileSearchingBydownloadnums)
+	Router.GET("/file/searching/thelatest", handler.FileSearchingByuploadtime)
+	Router.GET("/message/", handler.GetMessageInfoByhostid)
+	Router.POST("/message/leave", handler.LeaveMessage)
+
 
 	return
 }
