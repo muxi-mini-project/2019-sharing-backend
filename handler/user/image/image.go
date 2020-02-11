@@ -3,7 +3,8 @@ package image
 import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
-
+	"github.com/muxi-mini-project/2020-sharing-backend/handler"
+	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
 func Image(c *gin.Context) {

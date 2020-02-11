@@ -10,12 +10,12 @@ import (
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/fans"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/following"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/following_list"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/image"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/login"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/register"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/signture"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/up_list"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/view"
-
 )
 
 var Router *gin.Engine
@@ -42,14 +42,16 @@ func InitRouter() {
 	Router.DELETE("/file/delete", handler.DeleteFile)
 	Router.POST("/file/download", handler.DownloadFile)
 	Router.POST("/file/collect", handler.Collect)
-	Router.DELETE("/file/unfavorite" , handler.Unfavourite)
+	Router.DELETE("/file/unfavorite", handler.Unfavourite)
 	Router.POST("/file/like", handler.Like)
 	Router.DELETE("/file/unlike", handler.Unlike)
 	Router.GET("/file/searching/thepopular", handler.FileSearchingBydownloadnums)
 	Router.GET("/file/searching/thelatest", handler.FileSearchingByuploadtime)
 	Router.GET("/message/", handler.GetMessageInfoByhostid)
 	Router.POST("/message/leave", handler.LeaveMessage)
-
+	Router.POST("/file/score", handler.Score)
+	Router.POST("/user/collect_list/create", handler.CreateNewCollectlist)
+	Router.PUT("/user/collect_list", handler.ChangeCollectionlistName)
 
 	return
 }

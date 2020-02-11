@@ -286,122 +286,119 @@ func CreateFollowing(fans_id string, following_id string) {
 	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id, Following_id: following_id})
 }
 
-func GetDownFileid(uid string) (file_id []int,err error)  {
-	if err = DB.Self.Table("file_downloader").Where("downloader_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
+func GetDownFileid(uid string) (file_id []int, err error) {
+	if err = DB.Self.Table("file_downloader").Where("downloader_id", uid).Pluck("file_id", &file_id).Error; err != nil {
 		err = nil
 		return
 	}
 	return
 }
 
-func List(fid []int)(file []File,err error){
+func List(fid []int) (file []File, err error) {
 	var File []File
-	for _ ,data := range fid {
+	for _, data := range fid {
 		File = nil
-		if err := DB.Self.Table("file").Where("file_id",data).Joins("JOIN file_uploader ON file.file_id = file_uploader.file_id ").Select("file.file_name,file.content,file.subject,file.college,file_uploader.upload_time,file.file_url,file.collect_num,file.down_num,file.format").Scan(&File).Error ; err != nil {
+		if err := DB.Self.Table("file").Where("file_id", data).Joins("JOIN file_uploader ON file.file_id = file_uploader.file_id ").Select("file.file_name,file.content,file.subject,file.college,file_uploader.upload_time,file.file_url,file.collect_num,file.down_num,file.format").Scan(&File).Error; err != nil {
 			err = nil
 		}
-		for _ ,data1 := range File {
-			file = append(file,data1)
+		for _, data1 := range File {
+			file = append(file, data1)
 		}
 	}
 	return
 }
 
-func GetUpFileid(uid string) (file_id []int,err error)  {
-	if err = DB.Self.Table("file_uploader").Where("uploader_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
+func GetUpFileid(uid string) (file_id []int, err error) {
+	if err = DB.Self.Table("file_uploader").Where("uploader_id", uid).Pluck("file_id", &file_id).Error; err != nil {
 		err = nil
 		return
 	}
 	return
 }
 
-
-func GetCollectionFileid(uid string) (file_id []int,err error)  {
-	if err = DB.Self.Table("file_collecter").Where("collecter_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
+func GetCollectionFileid(uid string) (file_id []int, err error) {
+	if err = DB.Self.Table("file_collecter").Where("collecter_id", uid).Pluck("file_id", &file_id).Error; err != nil {
 		err = nil
 		return
 	}
 	return
 }
 
-func CheckFollowingByFans_id(following_id string,fans_id string)bool  {
+func CheckFollowingByFans_id(following_id string, fans_id string) bool {
 	var l Following_fans
-	res := DB.Self.Model(&Following_fans{}).Table("following_fans").Where(Following_fans{Following_id: following_id,Fans_id :fans_id}).First(&l)
+	res := DB.Self.Model(&Following_fans{}).Table("following_fans").Where(Following_fans{Following_id: following_id, Fans_id: fans_id}).First(&l)
 	if res.RecordNotFound() {
 		return false
 	}
 	return true
 }
 
-func DeleteFollowing(fans_id string,following_id string)error  {
-	if err :=DB.Self.Table("following_fans").Where("fans_id",fans_id,"following_id",following_id).Delete(Following_fans{}).Error ; err != nil {
+func DeleteFollowing(fans_id string, following_id string) error {
+	if err := DB.Self.Table("following_fans").Where("fans_id", fans_id, "following_id", following_id).Delete(Following_fans{}).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetFansid(uid string) (fans_id []string,err error)  {
-	if err = DB.Self.Table("following_fans").Where("following_id", uid).Pluck("fans_id",&fans_id).Error ; err != nil {
+func GetFansid(uid string) (fans_id []string, err error) {
+	if err = DB.Self.Table("following_fans").Where("following_id", uid).Pluck("fans_id", &fans_id).Error; err != nil {
 		err = nil
 
 	}
 	return
 }
 
-func FansList(fid []string)(user []User,err error){
+func FansList(fid []string) (user []User, err error) {
 	var User []User
-	for _ ,data := range fid {
+	for _, data := range fid {
 		User = nil
-		if err := DB.Self.Table("user").Where("user_id",data).Select("user.id,user_name,image_url,signture").Scan(&User).Error ; err != nil {
+		if err := DB.Self.Table("user").Where("user_id", data).Select("user.id,user_name,image_url,signture").Scan(&User).Error; err != nil {
 			err = nil
 		}
-		for _ ,data1 := range User {
-			user = append(user,data1)
+		for _, data1 := range User {
+			user = append(user, data1)
 		}
 	}
 	return
 }
 
-func FansNum(uid string)(num int ,err error)  {
-	if err := DB.Self.Table("following_fans").Where("following_id",uid).Count(&num).Error; err != nil {
+func FansNum(uid string) (num int, err error) {
+	if err := DB.Self.Table("following_fans").Where("following_id", uid).Count(&num).Error; err != nil {
 		err = nil
 
 	}
 	return
 }
 
-func GetFollowingid(uid string) (following_id []string,err error)  {
-	if err = DB.Self.Table("following_fans").Where("fans_id", uid).Pluck("following_id",&following_id).Error ; err != nil {
+func GetFollowingid(uid string) (following_id []string, err error) {
+	if err = DB.Self.Table("following_fans").Where("fans_id", uid).Pluck("following_id", &following_id).Error; err != nil {
 		err = nil
 
 	}
 	return
 }
 
-type Following struct{
-	ID             int    `gorm:"id" json:"id"`
-	User_id        string `gorm:"user_id" json:"user_id"`
-	User_name      string `gorm:"user_name" json:"user_name"`
-	Signture       string `gorm:"signture" json:"signture"`
-	Image_url      string `gorm:"image_url" json:"image_url"`
-	Following_up   []File `gorm:"following_up" json:"following_up"`
+type Following struct {
+	ID           int    `gorm:"id" json:"id"`
+	User_id      string `gorm:"user_id" json:"user_id"`
+	User_name    string `gorm:"user_name" json:"user_name"`
+	Signture     string `gorm:"signture" json:"signture"`
+	Image_url    string `gorm:"image_url" json:"image_url"`
+	Following_up []File `gorm:"following_up" json:"following_up"`
 }
 
-
-
-func FollowingList(fid []string)(following []Following,err error){
+func FollowingList(fid []string) (following []Following, err error) {
 	var Following []Following
-	for _ ,data := range fid {
+	for _, data := range fid {
 		Following = nil
-		m ,_ := GetUpFileid(data)
-		l ,_ := List(m)
-		if err := DB.Self.Table("user").Where("user_id",data).Select("user.id,user_name,image_url,signture").Scan(&Following).Error ; err != nil {
+		m, _ := GetUpFileid(data)
+		l, _ := List(m)
+		if err := DB.Self.Table("user").Where("user_id", data).Select("user.id,user_name,image_url,signture").Scan(&Following).Error; err != nil {
 			err = nil
 		}
-		for _ ,data1 := range Following {
-			data1.Following_up= l
-			following = append(following,data1)
+		for _, data1 := range Following {
+			data1.Following_up = l
+			following = append(following, data1)
 			// following.Following_up= l
 		}
 	}

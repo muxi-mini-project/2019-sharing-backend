@@ -4,7 +4,6 @@ import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
-	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 )
 
 func Background(c *gin.Context) {

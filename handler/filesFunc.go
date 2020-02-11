@@ -14,6 +14,16 @@ type tmp struct {
 	Type    string `json:"type"`
 }
 
+type tmpscore struct {
+	Fileid int `json:"file_id"`
+	Score  int `json:"score"`
+}
+
+type collecttmp struct {
+	FileId        int `json:"file_id"`
+	CollectlistId int `json:"collectlistId"`
+}
+
 func UploadFile(c *gin.Context) {
 	var tmpfile model.File
 	var tmpuser model.User
@@ -161,7 +171,7 @@ func DownloadFile(c *gin.Context) {
 }
 
 func Collect(c *gin.Context) {
-	var a int
+	var a collecttmp
 	var tmpuser model.User
 	var tmpfile model.File
 	//得到token，并解码为string的学号
@@ -181,14 +191,14 @@ func Collect(c *gin.Context) {
 		})
 		return
 	}
-	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a}).First(&tmpfile).Error; err != nil {
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
 			"message": "文件未找到!",
 		})
 		return
 	}
-	if err := model.CreateNewCollectRecord(tmpfile.FileId, key); !err {
+	if err := model.CreateNewCollectRecord(tmpfile.FileId, key, a.CollectlistId); !err {
 		log.Print("收藏无法记录")
 		c.JSON(404, gin.H{
 			"message": "收藏行为无法被记录！",
@@ -235,6 +245,7 @@ func Unfavourite(c *gin.Context) {
 func Like(c *gin.Context) {
 	var a int
 	var tmpuser model.User
+	var tmplike model.Likes
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
 	key, _ := model.Token_info(token)
@@ -249,6 +260,14 @@ func Like(c *gin.Context) {
 		log.Println(err)
 		c.JSON(400, gin.H{
 			"message": "Bad Request!",
+		})
+		return
+	}
+	if err := model.DB.Self.Model(&model.Likes{}).Where(&model.Likes{FileId: a, UserId: key}).First(&tmplike); err != nil {
+		log.Println(err)
+		log.Print("该用户已点过赞")
+		c.JSON(401, gin.H{
+			"message": "该用户已点过赞",
 		})
 		return
 	}
@@ -356,5 +375,57 @@ func FileSearchingBydownloadnums(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "获取成功",
 		"file":    files,
+	})
+}
+
+func Score(c *gin.Context) {
+	var tmpscore tmpscore
+	var tmp model.Score
+	var tmpfile model.File
+	if err := c.BindJSON(&tmpscore); err != nil {
+		log.Println(err)
+		c.JSON(400, gin.H{
+			"message": "Bad Request!",
+		})
+		return
+	}
+	token := c.Request.Header.Get("token")
+	key, _ := model.Token_info(token)
+	if err := model.DB.Self.Model(&model.Score{}).Where(&model.Score{Userid: key, Fileid: tmpscore.Fileid}).First(&tmp).Error; err != nil {
+		log.Println(err)
+		log.Print("该用户已评分")
+		c.JSON(401, gin.H{
+			"message": "该用户已评分",
+		})
+		return
+	}
+	if err := model.CreateScoreRecord(key, tmpscore.Fileid, tmpscore.Score); !err {
+		log.Print("评分失败")
+		c.JSON(401, gin.H{
+			"message": "评分失败",
+		})
+		return
+	}
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: tmpscore.Fileid}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		log.Print("获取文件信息失败")
+		c.JSON(404, gin.H{
+			"message": "未找到相应文件",
+		})
+		return
+	}
+	s := tmpfile.Scored + 1
+	tmpfile.Grade = (tmpfile.Grade*model.InttoFloat(tmpfile.Scored) + model.InttoFloat(tmpscore.Score)) / model.InttoFloat(s)
+	tmpfile.Scored++
+	if err := model.DB.Self.Model(&model.Score{}).Save(&tmpfile).Error; err != nil {
+		log.Println(err)
+		log.Print("评分统计失败")
+		c.JSON(404, gin.H{
+			"message": "评分统计失败",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "评分成功",
 	})
 }

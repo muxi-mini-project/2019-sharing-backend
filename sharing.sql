@@ -120,19 +120,18 @@ CREATE TABLE `score` (
   `id`             INT UNSIGNED  NOT NULL AUTO_INCREMENT ,
   `user_id`        VARCHAR(15)   NOT NULL COMMENT "点赞的人id" ,
   `file_id`        INT   NOT NULL COMMENT "文件id" ,
-  `score`          INT   NOT NULL COMMENT DEFAULT 0 "文件单次评分" ,
+  `score`          INT   NOT NULL COMMENT  "文件单次评分" ,
 
   PRIMARY KEY (`id`) ,
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE `collect_list` (
-  `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `collectlist_id`     INT UNSIGNED NOT NULL COMMENT "收藏夹编号" ,
+  `collectlist_id`     INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT "收藏夹编号" ,
   `collectlist_name`   VARCHAR(30)   NOT NULL COMMENT  "收藏夹昵称" ,
-  `user_id`        INT UNSIGNED NOT NULL COMMENT "收藏夹所属用户" ,
+  `user_id`       VARCHAR(15) NOT NULL COMMENT "收藏夹所属用户" ,
 
-  PRIMARY KEY (`id`) ,
+  PRIMARY KEY (`collectlist_id`) ,
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 

@@ -2,7 +2,7 @@ package login
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jepril/sharing/model"
+	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
 type LoginPayload struct { // 用于接收payload的结构体

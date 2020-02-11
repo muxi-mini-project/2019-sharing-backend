@@ -17,6 +17,7 @@ type File struct {
 	Likes          int     `gorm:"like_num" json:"-"`
 	CollcetNumber  int     `gorm:"collect_num" json:"-"`
 	DownloadNumber int     `gorm:"download_num" json:"-"`
+	Scored         int     `gorm:"scored" json:"-"`
 }
 
 func CreateNewfile(tmpfile File) bool {

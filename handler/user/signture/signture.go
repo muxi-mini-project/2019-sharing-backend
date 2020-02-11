@@ -3,8 +3,8 @@ package signture
 import (
 	. "fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jepril/sharing/handler"
-	"github.com/jepril/sharing/model"
+	"github.com/muxi-mini-project/2020-sharing-backend/handler"
+	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
 func Signture(c *gin.Context) {
