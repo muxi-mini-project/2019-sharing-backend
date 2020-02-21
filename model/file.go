@@ -7,33 +7,33 @@ import (
 )
 
 type File_uploader struct {
-	UploaderId string `gorm:"uploader_id"`
-	FileId     int    `gorm:"file_id"`
-	Uploadtime string `gorm:"upload_time"`
+	UploaderId string `gorm:"column:uploader_id"`
+	FileId     int    `gorm:"column:file_id"`
+	Uploadtime string `gorm:"column:upload_time"`
 }
 
 type File_downloader struct {
-	DownloaderId string `gorm:"downloader_id"`
-	FileId       int    `gorm:"file_id"`
-	Downloadtime string `gorm:"download_time"`
+	DownloaderId string `gorm:"column:downloader_id"`
+	FileId       int    `gorm:"column:file_id"`
+	Downloadtime string `gorm:"column:download_time"`
 }
 
 type File_collecter struct {
-	CollecterId   string `gorm:"collecter_id"`
-	FileId        int    `gorm:"file_id"`
-	Collecttime   string `gorm:"collect_time"`
-	CollectlistId int    `gorm:"collectlist_id"`
+	CollecterId   string `gorm:"column:collecter_id"`
+	FileId        int    `gorm:"column:file_id"`
+	Collecttime   string `gorm:"column:collect_time"`
+	CollectlistId int    `gorm:"column:collectlist_id"`
 }
 
 type Likes struct {
-	UserId string `gorm:"user_id"`
-	FileId int    `gorm:"file_id"`
+	UserId string `gorm:"column:user_id"`
+	FileId int    `gorm:"column:file_id"`
 }
 
 type Score struct {
-	Score  int    `gorm:"score"`
-	Userid string `gorm:"user_id"`
-	Fileid int    `gorm:"file_id"`
+	Score  int    `gorm:"column:score"`
+	Userid string `gorm:"column:user_id"`
+	Fileid int    `gorm:"column:file_id"`
 }
 
 func CreateNewDownloadRecord(fileid int, downloaderid string) bool {
@@ -84,11 +84,45 @@ func CreateNewUploadRecord(fileid int, uploaderid string) bool {
 
 func Like(fileid int, userid string) bool {
 	var tmprecord Likes
+	var tmpfile File
 	tmprecord.FileId = fileid
 	tmprecord.UserId = userid
 	if err := DB.Self.Model(&Likes{}).Create(&tmprecord).Error; err != nil {
 		log.Println(err)
 		log.Print("记录创建失败")
+		return false
+	}
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		return false
+	}
+	tmpfile.LikeNum++
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).Update("like_num", tmpfile.LikeNum).Error; err != nil {
+		log.Println(err)
+		log.Print("点赞统计失败")
+		return false
+	}
+	return true
+}
+
+func Unlike(fileid int, userid string) bool {
+	var tmprecord Likes
+	var tmpfile File
+	tmprecord.FileId = fileid
+	tmprecord.UserId = userid
+	if err := DB.Self.Where(&Likes{FileId: fileid, UserId: userid}).Delete(&Likes{}).Error; err != nil {
+		log.Println(err)
+		log.Print("记录创建失败")
+		return false
+	}
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		return false
+	}
+	tmpfile.LikeNum--
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).Update("like_num", tmpfile.LikeNum).Error; err != nil {
+		log.Println(err)
+		log.Print("点赞统计失败")
 		return false
 	}
 	return true

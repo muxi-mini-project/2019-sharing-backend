@@ -19,11 +19,29 @@ type messagelist struct {
 	time      string
 }
 
+// @Summary 发出留言
+// @Description 根据userid检测是否为已注册用户进行的操作，随后根据传入的信息进行留言记录
+// @Tags message
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body string true "请求id"
+// @Success 200 {object} model.Res "{"msg":"success"}/{"msg":"需求已经被删除了!"}/{"msg":"已经处理过了!"}"
+// @Failure 401 {object} error.Error "{"error_code":"10001", "message":"Token Invalid."} 身份认证失败 重新登录"
+// @Failure 400 {object} error.Error "{"error_code":"00001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
+// @Failure 500 {object} error.Error "{"error_code":"30001", "message":"Fail."} 失败"
+// @Router /message/leave/ [post]
 func LeaveMessage(c *gin.Context) {
 	var tmpnote note
 	var tmpuser model.User
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
+	if len(token) == 0 {
+		c.JSON(401, gin.H{
+			"message": "身份认证错误，请先登录或注册！",
+		})
+		return
+	}
 	key, _ := model.Token_info(token)
 	if err := model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: key}).First(&tmpuser).Error; err != nil {
 		log.Println(err)
@@ -45,10 +63,11 @@ func LeaveMessage(c *gin.Context) {
 			"message": "留言失败！",
 		})
 		return
+	} else {
+		c.JSON(200, gin.H{
+			"message": "留言成功！",
+		})
 	}
-	c.JSON(200, gin.H{
-		"message": "留言成功！",
-	})
 }
 
 func GetMessageInfoByhostid(c *gin.Context) {
@@ -58,6 +77,12 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	var note messagelist
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
+	if len(token) == 0 {
+		c.JSON(401, gin.H{
+			"message": "身份认证错误，请先登录或注册！",
+		})
+		return
+	}
 	key, _ := model.Token_info(token)
 	if err := model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: key}).First(&tmpuser).Error; err != nil {
 		log.Println(err)

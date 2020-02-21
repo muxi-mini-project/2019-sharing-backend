@@ -35,7 +35,7 @@ type User struct {
 	Background_url string `gorm:"background_url" json:"background_url"`
 	Fans_num       int    `gorm:"fans_num" json:"fans_num"`
 	Following_num  int    `gorm:"following_num" json:"following_num"`
-	Upload_time    string `gorm:"upload_time" json:"upload_time"`
+	//Upload_time    string `gorm:"-" json:"-"`
 }
 
 type Following_fans struct {

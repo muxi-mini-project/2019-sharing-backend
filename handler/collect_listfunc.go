@@ -14,6 +14,12 @@ type data struct {
 func CreateNewCollectlist(c *gin.Context) {
 	var data string
 	token := c.Request.Header.Get("token")
+	if len(token) == 0 {
+		c.JSON(401, gin.H{
+			"message": "身份认证错误，请先登录或注册！",
+		})
+		return
+	}
 	key, _ := model.Token_info(token)
 	if err := c.BindJSON(&data); err != nil {
 		log.Println(err)
@@ -40,6 +46,12 @@ func ChangeCollectionlistName(c *gin.Context) {
 	var tmpcollectlist model.Collect_list
 	//利用token解码出的userid来检验进行该操作的是否为本人
 	token := c.Request.Header.Get("token")
+	if len(token) == 0 {
+		c.JSON(401, gin.H{
+			"message": "身份认证错误，请先登录或注册！",
+		})
+		return
+	}
 	key, _ := model.Token_info(token)
 	if err := model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: key}).First(&tmpuser).Error; err != nil {
 		log.Println(err)
