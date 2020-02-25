@@ -345,7 +345,7 @@ func Like(c *gin.Context) {
 
 func Unlike(c *gin.Context) {
 	var a model.Tmpfileid
-	var tmprecord model.Likes
+	//var tmprecord model.Likes
 	token := c.Request.Header.Get("token")
 	if len(token) == 0 {
 		c.JSON(401, gin.H{
@@ -354,13 +354,13 @@ func Unlike(c *gin.Context) {
 		return
 	}
 	key, _ := model.Token_info(token)
-	if err := model.DB.Self.Model(&model.Likes{}).Where(&model.Likes{UserId: key, FileId: a.FileId}).First(&tmprecord).Error; err != nil {
+	/*if err := model.DB.Self.Model(&model.Likes{}).Where(&model.Likes{UserId: key, FileId: a.FileId}).First(&tmprecord).Error; err != nil {
 		log.Println(err)
 		c.JSON(401, gin.H{
 			"message": "非本人操作！",
 		})
 		return
-	}
+	}*/
 	if err := c.BindJSON(&a); err != nil {
 		log.Println(err)
 		c.JSON(400, gin.H{
@@ -395,7 +395,7 @@ func FileSearchingByuploadtime(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
 	sum := page * pagesize
-	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count); err != nil {
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Count(&count).Error; err != nil {
 		log.Println(err)
 		log.Print("获取总数失败")
 		return
@@ -404,7 +404,7 @@ func FileSearchingByuploadtime(c *gin.Context) {
 	if i < 0 {
 		i = -1
 	}
-	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(i).Limit(pagesize).Find(&files); err != nil {
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Order("file_id desc").Offset(i).Limit(pagesize).Find(&files).Error; err != nil {
 		log.Println(err)
 		log.Print("获取数据失败")
 		c.JSON(400, gin.H{
@@ -431,7 +431,7 @@ func FileSearchingBydownloadnums(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
 	sum := (page - 1) * pagesize
-	if err := model.DB.Self.Model(&model.File{}).Order("download_num desc").Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(sum).Limit(pagesize).Find(&files); err != nil {
+	if err := model.DB.Self.Model(&model.File{}).Order("download_num desc").Where(&model.File{Format: tmp.Format, College: tmp.College, Type: tmp.Type, Subject: tmp.Subject}).Offset(sum).Limit(pagesize).Find(&files).Error; err != nil {
 		log.Println(err)
 		log.Print("获取数据失败")
 		c.JSON(400, gin.H{
@@ -491,7 +491,7 @@ func Score(c *gin.Context) {
 	tmpfile.Grade = (tmpfile.Grade*model.InttoFloat(tmpfile.Scored) + model.InttoFloat(tmpscore.Score)) / model.InttoFloat(s)
 	fmt.Println(tmpfile.Grade)
 	tmpfile.Scored++
-	if err := model.DB.Self.Model(&model.Score{}).Save(&tmpfile).Error; err != nil {
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: tmpscore.Fileid}).Update(&model.File{Grade: tmpfile.Grade, Scored: tmpfile.Scored}).Error; err != nil {
 		log.Println(err)
 		log.Print("评分统计失败")
 		c.JSON(404, gin.H{

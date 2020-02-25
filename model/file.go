@@ -38,6 +38,7 @@ type Score struct {
 
 func CreateNewDownloadRecord(fileid int, downloaderid string) bool {
 	var tmprecord File_downloader
+	var tmpfile File
 	tmprecord.FileId = fileid
 	tmprecord.DownloaderId = downloaderid
 	tNow := time.Now()
@@ -48,11 +49,22 @@ func CreateNewDownloadRecord(fileid int, downloaderid string) bool {
 		log.Print("记录创建失败")
 		return false
 	}
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		return false
+	}
+	tmpfile.DownloadNum++
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).Update("download_num", tmpfile.DownloadNum).Error; err != nil {
+		log.Println(err)
+		log.Print("点赞统计失败")
+		return false
+	}
 	return true
 }
 
 func CreateNewCollectRecord(fileid int, collecterid string, collectlistid int) bool {
 	var tmprecord File_collecter
+	var tmpfile File
 	tmprecord.FileId = fileid
 	tmprecord.CollecterId = collecterid
 	tNow := time.Now()
@@ -62,6 +74,16 @@ func CreateNewCollectRecord(fileid int, collecterid string, collectlistid int) b
 	if err := DB.Self.Model(&File_downloader{}).Create(&tmprecord).Error; err != nil {
 		log.Println(err)
 		log.Print("记录创建失败")
+		return false
+	}
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		return false
+	}
+	tmpfile.CollcetNum++
+	if err := DB.Self.Model(&File{}).Where(&File{FileId: fileid}).Update("collect_num", tmpfile.CollcetNum).Error; err != nil {
+		log.Println(err)
+		log.Print("点赞统计失败")
 		return false
 	}
 	return true

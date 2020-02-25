@@ -30,7 +30,7 @@ CREATE TABLE `file` (
   `subject`        VARCHAR(20)  NOT NULL COMMENT  "学科" ,
   `college`        VARCHAR(20)  NOT NULL COMMENT  "学院" ,
   `type`           VARCHAR(20)  NOT NULL COMMENT  "文件类型/(复习资料/历年真题/...)",
-  `grade`          INT          NOT NULL DEFAULT 0 COMMENT "评分" , 
+  `grade`          FLOAT        NOT NULL DEFAULT 0 COMMENT "评分" ,
   `like_num`       INT          NOT NULL DEFAULT 0 COMMENT "点赞数" ,
   `collect_num`    INT          NOT NULL DEFAULT 0 COMMENT "收藏数" ,
   `download_num`   INT          NOT NULL DEFAULT 0 COMMENT "下载数" ,

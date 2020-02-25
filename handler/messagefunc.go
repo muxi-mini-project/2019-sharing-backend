@@ -57,6 +57,13 @@ func LeaveMessage(c *gin.Context) {
 		})
 		return
 	}
+	if tmpnote.Content == "" {
+		log.Print("请输入留言内容")
+		c.JSON(404, gin.H{
+			"message": "无留言内容，请输入留言内容",
+		})
+		return
+	}
 	if err := model.CreateNewMessage(key, tmpnote.Hostid, tmpnote.Content); !err {
 		log.Print("无法留言")
 		c.JSON(404, gin.H{
@@ -96,7 +103,7 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
 	sum := (page - 1) * pagesize
-	if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId: hostid}).Offset(sum).Limit(pagesize).Find(&tmpnote); err != nil {
+	if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId: hostid}).Offset(sum).Limit(pagesize).Find(&tmpnote).Error; err != nil {
 		log.Println(err)
 		log.Print("")
 		c.JSON(400, gin.H{
@@ -109,9 +116,16 @@ func GetMessageInfoByhostid(c *gin.Context) {
 		note.content = j.Content
 		note.writerid = j.WriterId
 		note.time = j.WriteTime
-		model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: j.WriterId}).First(&tmpuser)
+		if err := model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: j.WriterId}).First(&tmpuser).Error; err != nil {
+			log.Print("未能成功获取留言用户头像信息")
+			c.JSON(404, gin.H{
+				"message": "未成功",
+			})
+			return
+		}
 		note.image_url = tmpuser.Image_url
 		tmpmessage = append(tmpmessage, note)
+		log.Print(note)
 	}
 	c.JSON(200, gin.H{
 		"message":      "操作成功",
