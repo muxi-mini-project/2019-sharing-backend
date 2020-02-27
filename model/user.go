@@ -59,6 +59,12 @@ type File1 struct{
 	Scored		int 		`gorm:"scored" json:"scored"`
 }
 
+type Collect_list struct {
+	CollectlistId   int    `gorm:"collectlist_id"`
+	CollectlistName string `gorm:"collectlist_name"`
+	UserID          string `gorm:"user_id"`
+}
+
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
 	params, err := makeAccountPreflightRequest()
@@ -212,6 +218,11 @@ func makeAccountRequest(sid, password string, params *accountReqeustParams, clie
 //注册用户
 func CreateUser(user_id string, user_name string, password string) {
 	DB.Self.Model(&User{}).Create(&User{User_id: user_id, User_name: user_name, Password: password})
+	CreateCollect_list(user_id)
+}
+
+func CreateCollect_list(user_id string) {
+	DB.Self.Table("collect_list").Create(&Collect_list{CollectlistName: "默认文件夹", UserID: user_id})
 }
 
 func CheckUserByUser_id(user_id string) bool {
