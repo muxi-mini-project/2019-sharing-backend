@@ -22,7 +22,7 @@ type tmpscore struct {
 
 type collecttmp struct {
 	FileId        int `json:"file_id"`
-	CollectlistId int `json:"collectlistId"`
+	CollectlistId int `json:"collectlist_id"`
 }
 
 func UploadFile(c *gin.Context) {
@@ -236,6 +236,12 @@ func Collect(c *gin.Context) {
 		})
 		return
 	}
+	if a.CollectlistId == 0 {
+		log.Print("请输入collectlist_id")
+		c.JSON(401,gin.H{
+			"message":"参数不全，请输入collectlist_id",
+		})
+	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
@@ -256,19 +262,12 @@ func Collect(c *gin.Context) {
 }
 
 func Unfavourite(c *gin.Context) {
-	var a int
-	var tmpuser model.User
+	var a collecttmp
+	var tmpfile model.File
+	//var tmpuser model.User
 	//利用token解码出的userid来检验进行该操作的是否为已注册用户
 	token := c.Request.Header.Get("token")
 	if len(token) == 0 {
-		c.JSON(401, gin.H{
-			"message": "身份认证错误，请先登录或注册！",
-		})
-		return
-	}
-	key, _ := model.Token_info(token)
-	if err := model.DB.Self.Model(&model.File_collecter{}).Where(&model.File_collecter{CollecterId: key, FileId: a}).First(&tmpuser).Error; err != nil {
-		log.Println(err)
 		c.JSON(401, gin.H{
 			"message": "身份认证错误，请先登录或注册！",
 		})
@@ -281,10 +280,34 @@ func Unfavourite(c *gin.Context) {
 		})
 		return
 	}
-	if err := model.DB.Self.Model(&model.File_collecter{}).Delete(&model.File_collecter{FileId: a, CollecterId: key}); err != nil {
+	key, _ := model.Token_info(token)
+	/*if err := model.DB.Self.Model(&model.File_collecter{}).Where(&model.File_collecter{CollecterId: key, FileId: a.FileId}).First(&tmpuser).Error; err != nil {
+		log.Println(err)
+		c.JSON(401, gin.H{
+			"message": "身份认证错误，请先登录或注册！",
+		})
+		return
+	}*/
+	if err := model.DB.Self.Where(&model.File_collecter{FileId: a.FileId, CollecterId: key,CollectlistId:a.CollectlistId}).Delete(&model.File_collecter{}).Error; err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
 			"message": "未找到或取消收藏失败！",
+		})
+		return
+	}
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
+		log.Println(err)
+		c.JSON(404,gin.H{
+			"message": "找不到对应文件",
+		})
+		return
+	}
+	tmpfile.CollcetNum --
+	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).Update("collect_num", tmpfile.CollcetNum).Error; err != nil {
+		log.Println(err)
+		log.Print("收藏统计失败")
+		c.JSON(403,gin.H{
+			"message":"收藏统计失败",
 		})
 		return
 	}

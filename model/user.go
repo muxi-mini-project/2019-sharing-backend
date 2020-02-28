@@ -35,7 +35,7 @@ type User struct {
 	Background_url string `gorm:"background_url" json:"background_url"`
 	Fans_num       int    `gorm:"fans_num" json:"fans_num"`
 	Following_num  int    `gorm:"following_num" json:"following_num"`
-	Upload_time    string `gorm:"upload_time" json:"upload_time"`
+	Upload_time    string `gorm:"-" json:"upload_time"`
 }
 
 type Following_fans struct {
@@ -59,11 +59,6 @@ type File1 struct{
 	Scored		int 		`gorm:"scored" json:"scored"`
 }
 
-type Collect_list struct {
-	CollectlistId   int    `gorm:"collectlist_id"`
-	CollectlistName string `gorm:"collectlist_name"`
-	UserID          string `gorm:"user_id"`
-}
 
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {

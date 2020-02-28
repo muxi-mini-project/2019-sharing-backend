@@ -13,10 +13,10 @@ type note struct {
 }
 
 type messagelist struct {
-	writerid  string
-	content   string
-	image_url string
-	time      string
+	Writerid  string `json:"writer_id"`
+	Content   string `json:"message"`
+	Image_url string `json:"image_url"`
+	Time      string `json:"write_time"`
 }
 
 // @Summary 发出留言
@@ -103,19 +103,26 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pagesize, _ := strconv.Atoi(c.DefaultQuery("pagesize", "20"))
 	sum := (page - 1) * pagesize
+	if hostid == "" {
+		log.Print("请至少输入hostid")
+		c.JSON(400,gin.H{
+			"message": "传入参数不全",
+		})
+		return
+	}
 	if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId: hostid}).Offset(sum).Limit(pagesize).Find(&tmpnote).Error; err != nil {
 		log.Println(err)
 		log.Print("")
 		c.JSON(400, gin.H{
-			"message": "传入参数不全",
+			"message": "请至少输入hostid",
 		})
 		return
 	}
 	//i记录序号，j表示内容
 	for _, j := range tmpnote {
-		note.content = j.Content
-		note.writerid = j.WriterId
-		note.time = j.WriteTime
+		note.Content = j.Content
+		note.Writerid = j.WriterId
+		note.Time = j.WriteTime
 		if err := model.DB.Self.Model(&model.User{}).Where(&model.User{User_id: j.WriterId}).First(&tmpuser).Error; err != nil {
 			log.Print("未能成功获取留言用户头像信息")
 			c.JSON(404, gin.H{
@@ -123,10 +130,11 @@ func GetMessageInfoByhostid(c *gin.Context) {
 			})
 			return
 		}
-		note.image_url = tmpuser.Image_url
+		note.Image_url = tmpuser.Image_url
 		tmpmessage = append(tmpmessage, note)
-		log.Print(note)
+		//log.Print(tmpnote)
 	}
+	//log.Print(tmpmessage)
 	c.JSON(200, gin.H{
 		"message":      "操作成功",
 		"message_list": tmpmessage,

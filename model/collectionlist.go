@@ -3,9 +3,9 @@ package model
 import log "github.com/sirupsen/logrus"
 
 type Collect_list struct {
-	CollectlistId   int    `gorm:"collectlist_id"`
-	CollectlistName string `gorm:"collectlist_name"`
-	UserID          string `gorm:"user_id"`
+	CollectlistId   int    `gorm:"column:collectlist_id"`
+	CollectlistName string `gorm:"column:collectlist_name"`
+	UserID          string `gorm:"column:user_id"`
 }
 
 func CreateNewcollectlist(collect_name string, userid string) bool {
