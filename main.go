@@ -6,6 +6,14 @@ import (
 	"log"
 )
 
+// @title Sharing
+// @version 1.0
+// @description 资源共享
+
+// @host
+// @BasePath /sharing/v1/
+
+// @Schemas http
 func main() {
 	model.DB.Init()
 	defer model.DB.Close()
