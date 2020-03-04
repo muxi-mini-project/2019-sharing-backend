@@ -9,6 +9,19 @@ import (
 	. "fmt"
 )
 
+// @Summary 显示用户上传
+// @Description 显示用户上传信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param User.User_id body model.User.User_id true "查看人的ID"
+// @Param token header string true "token"
+// @Success 200 {object} model.File2 "{"messsge":"successfully","lists",数组}"
+// @Failure 401 {object} error.Error "{"error_code":"10001", "message":"Token Invalid."} 身份认证失败 重新登录 or {"error_code":"00002", "message":"wrong mysql."}"
+// @Failure 400 {object} error.Error "{"error_code":"00001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
+// @Failure 500 {object} error.Error "{"error_code":"30001", "message":"Fail."} 失败"
+// @Router /user/up_list/ [get]
+
 func UpList(c *gin.Context) {
 	//var Token	string
 
@@ -43,15 +56,15 @@ func UpList(c *gin.Context) {
 	rows, err := model.List(fid)
 
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err,
-		})
+		c.JSON(401, gin.H{
+			"message": "wrong mysql",
+			"err":err,
 		return
 	}
 
 	c.JSON(200, gin.H{
 		"message":      "successfully",
-		"collect_list": rows,
+		"lists": rows,
 	})
 	return
 }

@@ -9,6 +9,19 @@ import (
 	. "fmt"
 )
 
+// @Summary 显示用户粉丝信息
+// @Description 显示用户粉丝信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param User.User_id body model.User.User_id true "查看人的ID"
+// @Param token header string true "token"
+// @Success 200 {object} model.User2 "{"messsge":"successfully","total":数量，"fans_lists",数组}"
+// @Failure 401 {object} error.Error "{"error_code":"10001", "message":"Token Invalid."} 身份认证失败 重新登录 or {"error_code":"00002", "message":"wrong mysql."} or {"error_code":"10001", "message":"User does not Existed!"} 用户不存在"
+// @Failure 400 {object} error.Error "{"error_code":"00001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
+// @Failure 500 {object} error.Error "{"error_code":"30001", "message":"Fail."} 失败"
+// @Router /user/fans/ [get]
+
 func Fans(c *gin.Context) {
 
 	Token := c.Request.Header.Get("Token")
@@ -40,15 +53,16 @@ func Fans(c *gin.Context) {
 	num, err := model.FansNum(data.User_id)
 
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err,
+		c.JSON(401, gin.H{
+			"message": "wrong mysql",
+			"err":err,
 		})
 		return
 	}
 
 	c.JSON(200, gin.H{
 		"message":   "successfully",
-		"fans_list": rows,
+		"fans_lists": rows,
 		"total":     num,
 	})
 	return
