@@ -55,15 +55,15 @@ func Fans(c *gin.Context) {
 	if err != nil {
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
-			"err":err,
+			"err":     err,
 		})
 		return
 	}
 
 	c.JSON(200, gin.H{
-		"message":   "successfully",
+		"message":    "successfully",
 		"fans_lists": rows,
-		"total":     num,
+		"total":      num,
 	})
 	return
 }

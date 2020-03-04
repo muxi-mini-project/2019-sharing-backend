@@ -36,8 +36,8 @@ func Register(c *gin.Context) {
 	}
 
 	if model.ConfirmUser(data.User_id, data.Password) {
-		err :=model.CreateUser(data.User_id, data.User_name, data.Password)
-		if err !=nil{
+		err := model.CreateUser(data.User_id, data.User_name, data.Password)
+		if err != nil {
 			c.JSON(401, gin.H{
 				"message": "wrong mysql",
 			})

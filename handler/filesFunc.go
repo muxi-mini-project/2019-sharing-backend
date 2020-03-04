@@ -25,6 +25,18 @@ type collecttmp struct {
 	CollectlistId int `json:"collectlist_id"`
 }
 
+// @Summary 上传文件
+// @Description 上传文件
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.File true
+// @Success 200 {object} model.Res "{"message":"上传成功"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"建立数据失败“} or {"message":"上传行为无法被记录“}"
+// @Router /file/upload/ [post]
 func UploadFile(c *gin.Context) {
 	var tmpfile model.File
 	var tmpuser model.User
@@ -80,10 +92,28 @@ func UploadFile(c *gin.Context) {
 	})
 }
 
+// @Summary 获取文件具体信息
+// @Description 获取文件具体信息
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.File true  "传入除了数类的数据"
+// @Success 200 {object} model.Res "{"message":"信息获取成功","file":file结构体的所有信息}"
+// @Failure 401 {object} model.Error "{"message":"查无此项或查询失败！"} or {"message":"该文件的上传时间查询出现问题"} "
+// @Failure 400 {object} model.Error "{"message":"请输入fileid"}"
+// @Router /file/fileinfo/:fileid/ [get]
 func GetFileInfo(c *gin.Context) {
 	var tmpfile model.File
 	var tmprecord model.File_uploader
 	fileid, _ := strconv.Atoi(c.Param("fileid"))
+	if fileid == 0 {
+		log.Print("请输入fileid")
+		c.JSON(400, gin.H{
+			"message": "请输入fileid",
+		})
+		return
+	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: fileid}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
 		c.JSON(401, gin.H{
@@ -112,6 +142,18 @@ func GetFileInfo(c *gin.Context) {
 	})
 }
 
+// @Summary 删除文件
+// @Description 删除文件
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.Tmpfileid true  "文件id"
+// @Success 200 {object} model.Res "{"message":"删除成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"} or{"message":"身份认证错误！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"未找到或删除出现错误！“}"
+// @Router /file/delete/ [delete]
 func DeleteFile(c *gin.Context) {
 	var a model.Tmpfileid
 	var tmprecord model.File_uploader
@@ -159,6 +201,18 @@ func DeleteFile(c *gin.Context) {
 	})
 }
 
+// @Summary 下载文件
+// @Description 下载文件
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.Tmpfileid true  "文件id"
+// @Success 200 {object} model.Downloadfile "{"message":"删除成功！", "file_url":fileid对应的fileurl}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"文件未找到！“} or {"message":"下载行为不能被记录！“}"
+// @Router /file/download/ [get]
 func DownloadFile(c *gin.Context) {
 	var a model.Tmpfileid
 	var tmpfile model.File
@@ -209,6 +263,18 @@ func DownloadFile(c *gin.Context) {
 	})
 }
 
+// @Summary 收藏文件
+// @Description 收藏文件
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body collecttmp true  "文件id与收藏夹id"
+// @Success 200 {object} model.Res "{"message":"收藏成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"} or {"message":"参数不全，请输入collectlist_id"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"文件未找到！“} or {"message":"收藏行为不能被记录！“}"
+// @Router /file/collect/ [post]
 func Collect(c *gin.Context) {
 	var a collecttmp
 	var tmpuser model.User
@@ -238,8 +304,8 @@ func Collect(c *gin.Context) {
 	}
 	if a.CollectlistId == 0 {
 		log.Print("请输入collectlist_id")
-		c.JSON(401,gin.H{
-			"message":"参数不全，请输入collectlist_id",
+		c.JSON(401, gin.H{
+			"message": "参数不全，请输入collectlist_id",
 		})
 	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
@@ -261,6 +327,19 @@ func Collect(c *gin.Context) {
 	})
 }
 
+// @Summary 取消收藏
+// @Description 取消收藏
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body collecttmp true  "文件id与收藏夹id"
+// @Success 200 {object} model.Res "{"message":"取消收藏成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"未找到或取消收藏失败！“} or {"message":"找不到对应文件“}"
+// @Failure 403 {object} model.Error "{"message":"收藏统计失败"}"
+// @Router /file/unfavorite/ [delete]
 func Unfavourite(c *gin.Context) {
 	var a collecttmp
 	var tmpfile model.File
@@ -288,7 +367,7 @@ func Unfavourite(c *gin.Context) {
 		})
 		return
 	}*/
-	if err := model.DB.Self.Where(&model.File_collecter{FileId: a.FileId, CollecterId: key,CollectlistId:a.CollectlistId}).Delete(&model.File_collecter{}).Error; err != nil {
+	if err := model.DB.Self.Where(&model.File_collecter{FileId: a.FileId, CollecterId: key, CollectlistId: a.CollectlistId}).Delete(&model.File_collecter{}).Error; err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
 			"message": "未找到或取消收藏失败！",
@@ -297,17 +376,17 @@ func Unfavourite(c *gin.Context) {
 	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
-		c.JSON(404,gin.H{
+		c.JSON(404, gin.H{
 			"message": "找不到对应文件",
 		})
 		return
 	}
-	tmpfile.CollcetNum --
+	tmpfile.CollcetNum--
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).Update("collect_num", tmpfile.CollcetNum).Error; err != nil {
 		log.Println(err)
 		log.Print("收藏统计失败")
-		c.JSON(403,gin.H{
-			"message":"收藏统计失败",
+		c.JSON(403, gin.H{
+			"message": "收藏统计失败",
 		})
 		return
 	}
@@ -316,6 +395,18 @@ func Unfavourite(c *gin.Context) {
 	})
 }
 
+// @Summary 点赞文件
+// @Description 点赞文件
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.Tmpfileid true  "文件id"
+// @Success 200 {object} model.Res "{"message":"点赞成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"} or {"message":"该用户已点过赞"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"点赞行为无法被记录！“}"
+// @Router /file/like/ [post]
 func Like(c *gin.Context) {
 	var a model.Tmpfileid
 	var tmpuser model.User
@@ -366,6 +457,18 @@ func Like(c *gin.Context) {
 	})
 }
 
+// @Summary 取消点赞
+// @Description 取消点赞
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body model.Tmpfileid true  "文件"
+// @Success 200 {object} model.Res "{"message":"取消点赞成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"取消点赞行为无法被记录！“}"
+// @Router /file/unlike/ [delete]
 func Unlike(c *gin.Context) {
 	var a model.Tmpfileid
 	//var tmprecord model.Likes
@@ -404,6 +507,17 @@ func Unlike(c *gin.Context) {
 	})
 }
 
+// @Summary 根据上传时间查询文件
+// @Description 获取最新发布的若干数据
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param data body tmp true  "规定的数据"
+// @Param page query string true "页码"
+// @Param pagesize query string true "一页所显示的数据"
+// @Success 200 {object} model.Getfiles "{"message":"信息获取成功","files":在检索条件下的file切片的所有信息}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"} or {"message":"数据获取失败"}"
+// @Router /file/searching/latest/ [get]
 func FileSearchingByuploadtime(c *gin.Context) {
 	var tmp tmp
 	var files []model.File
@@ -441,6 +555,17 @@ func FileSearchingByuploadtime(c *gin.Context) {
 	})
 }
 
+// @Summary 根据下载数查询文件
+// @Description 获取热门下载内容
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param data body tmp true  "规定的数据"
+// @Param page query string true "页码"
+// @Param pagesize query string true "一页所显示的数据"
+// @Success 200 {object} model.Getfiles "{"message":"信息获取成功","files":在检索条件下的file切片的所有信息}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"} or {"message":"数据获取失败"}"
+// @Router /file/searching/popular/ [get]
 func FileSearchingBydownloadnums(c *gin.Context) {
 	var tmp tmp
 	var files []model.File
@@ -468,6 +593,18 @@ func FileSearchingBydownloadnums(c *gin.Context) {
 	})
 }
 
+// @Summary 评分
+// @Description 评分
+// @Tags file
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body tmpscore true  "文件id与本次打分分数"
+// @Success 200 {object} model.Res "{"message":"评分成功！"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"} or {"message":"评分失败！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"评分统计失败“} or {"message":"未找到相应文件“}"
+// @Router /file/score/ [post]
 func Score(c *gin.Context) {
 	var tmpscore tmpscore
 	//var tmp model.Score
