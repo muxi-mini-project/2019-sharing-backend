@@ -53,7 +53,6 @@ func Signture(c *gin.Context) {
 		return
 	}
 
-
 	c.JSON(200, gin.H{
 		"message": "Modify Image Successful!",
 	})

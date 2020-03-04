@@ -46,12 +46,12 @@ func Image(c *gin.Context) {
 
 	//model.Image_modify(data.User_id, data.Image_url)
 	if err := model.Image_modify(data.User_id, data.Image_url); err != nil {
-	//Println("222")
-	c.JSON(401, gin.H{
-		"message": "wrong mysql",
-	})
-	return
-}
+		//Println("222")
+		c.JSON(401, gin.H{
+			"message": "wrong mysql",
+		})
+		return
+	}
 
 	c.JSON(200, gin.H{
 		"message": "Modify Image Successful!",

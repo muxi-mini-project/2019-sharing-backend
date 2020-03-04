@@ -238,8 +238,8 @@ func Collect(c *gin.Context) {
 	}
 	if a.CollectlistId == 0 {
 		log.Print("请输入collectlist_id")
-		c.JSON(401,gin.H{
-			"message":"参数不全，请输入collectlist_id",
+		c.JSON(401, gin.H{
+			"message": "参数不全，请输入collectlist_id",
 		})
 	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
@@ -288,7 +288,7 @@ func Unfavourite(c *gin.Context) {
 		})
 		return
 	}*/
-	if err := model.DB.Self.Where(&model.File_collecter{FileId: a.FileId, CollecterId: key,CollectlistId:a.CollectlistId}).Delete(&model.File_collecter{}).Error; err != nil {
+	if err := model.DB.Self.Where(&model.File_collecter{FileId: a.FileId, CollecterId: key, CollectlistId: a.CollectlistId}).Delete(&model.File_collecter{}).Error; err != nil {
 		log.Println(err)
 		c.JSON(404, gin.H{
 			"message": "未找到或取消收藏失败！",
@@ -297,17 +297,17 @@ func Unfavourite(c *gin.Context) {
 	}
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
-		c.JSON(404,gin.H{
+		c.JSON(404, gin.H{
 			"message": "找不到对应文件",
 		})
 		return
 	}
-	tmpfile.CollcetNum --
+	tmpfile.CollcetNum--
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: a.FileId}).Update("collect_num", tmpfile.CollcetNum).Error; err != nil {
 		log.Println(err)
 		log.Print("收藏统计失败")
-		c.JSON(403,gin.H{
-			"message":"收藏统计失败",
+		c.JSON(403, gin.H{
+			"message": "收藏统计失败",
 		})
 		return
 	}

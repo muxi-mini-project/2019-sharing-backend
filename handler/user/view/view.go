@@ -46,17 +46,16 @@ func View(c *gin.Context) {
 		return
 	}
 
-	rows,err := model.Viewing(data.User_id)
+	rows, err := model.Viewing(data.User_id)
 
 	if err != nil {
 		//Println("222")
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
-			"err":err,
+			"err":     err,
 		})
 		return
 	}
-
 
 	c.JSON(200, gin.H{
 		"message": rows,

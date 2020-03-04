@@ -27,7 +27,7 @@ func Login(c *gin.Context) { // 用于登录路由的处理函数
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
 			"message": "Bad Request!",
-			"err": err, // 接收过程中的错误视为Bad Request
+			"err":     err, // 接收过程中的错误视为Bad Request
 		})
 		return
 	}

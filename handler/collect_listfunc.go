@@ -12,13 +12,25 @@ type data struct {
 }
 
 type tmpstring struct {
-	 CollectlistName string `json:"collectlist_name"`
+	CollectlistName string `json:"collectlist_name"`
 }
 
 type tmpint struct {
-	CollectlistId   int    `json:"collectlist_id"`
+	CollectlistId int `json:"collectlist_id"`
 }
 
+// @Summary 新建收藏夹
+// @Description 新建收藏夹
+// @Tags collectlist
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body tmpstring true "收藏夹名称"
+// @Success 200 {object} model.Res "{"message":"收藏夹建立成功"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"收藏夹建立失败“} "
+// @Router /user/collect_list/create/ [post]
 func CreateNewCollectlist(c *gin.Context) {
 	var data tmpstring
 	token := c.Request.Header.Get("token")
@@ -48,6 +60,18 @@ func CreateNewCollectlist(c *gin.Context) {
 	})
 }
 
+// @Summary 收藏夹改名
+// @Description 收藏夹重命名
+// @Tags collectlist
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body data true "收藏夹id与新收藏夹名字"
+// @Success 200 {object} model.Res "{"message":"收藏夹改名成功"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"未找到收藏夹“} or {"message":"数据更新失败“}"
+// @Router /user/collect_list/ [put]
 func ChangeCollectionlistName(c *gin.Context) {
 	var data data
 	var tmpcollectlist model.Collect_list
@@ -77,7 +101,7 @@ func ChangeCollectionlistName(c *gin.Context) {
 		return
 	}
 	tmpcollectlist.CollectlistName = data.CollectlistName
-	if err := model.DB.Self.Model(&model.Collect_list{}).Where(&model.Collect_list{CollectlistId:data.CollectlistId}).Update("collectlist_name",tmpcollectlist.CollectlistName).Error; err != nil {
+	if err := model.DB.Self.Model(&model.Collect_list{}).Where(&model.Collect_list{CollectlistId: data.CollectlistId}).Update("collectlist_name", tmpcollectlist.CollectlistName).Error; err != nil {
 		log.Println(err)
 		log.Print("更新数据失败")
 		c.JSON(404, gin.H{
@@ -90,7 +114,19 @@ func ChangeCollectionlistName(c *gin.Context) {
 	})
 }
 
-func DeleteCollectlist (c *gin.Context){
+// @Summary 删除收藏夹
+// @Description 删除收藏夹
+// @Tags collectlist
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param data body tmpint true "收藏夹id"
+// @Success 200 {object} model.Res "{"message":"收藏夹删除成功"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"收藏夹删除失败“}"
+// @Router /user/collect_list/delete/ [delete]
+func DeleteCollectlist(c *gin.Context) {
 	var data tmpint
 	token := c.Request.Header.Get("token")
 	if len(token) == 0 {
@@ -107,15 +143,15 @@ func DeleteCollectlist (c *gin.Context){
 		})
 		return
 	}
-	if err := model.DB.Self.Where(&model.Collect_list{CollectlistId:data.CollectlistId}).Delete(&model.Collect_list{}).Error;err != nil {
+	if err := model.DB.Self.Where(&model.Collect_list{CollectlistId: data.CollectlistId}).Delete(&model.Collect_list{}).Error; err != nil {
 		log.Println(err)
 		log.Print("收藏夹删除失败")
 		c.JSON(404, gin.H{
-			"message":"收藏夹删除失败",
+			"message": "收藏夹删除失败",
 		})
 		return
 	}
 	c.JSON(200, gin.H{
-		"message":"收藏夹删除成功",
+		"message": "收藏夹删除成功",
 	})
 }

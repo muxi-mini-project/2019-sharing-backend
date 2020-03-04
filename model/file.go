@@ -74,7 +74,7 @@ func CreateNewCollectRecord(fileid int, collecterid string, collectlistid int) b
 	tmprecord1.Collecttime = timeNow
 	tmprecord1.CollectlistId = collectlistid
 	//利用tmprecord2进行一个记录是否存在的检测
-	if err := DB.Self.Model(&File_collecter{}).Where(&File_collecter{FileId:fileid,CollectlistId:collectlistid,CollecterId:collecterid}).Find(&tmprecord2).Error; tmprecord2.Collecttime != ""{
+	if err := DB.Self.Model(&File_collecter{}).Where(&File_collecter{FileId: fileid, CollectlistId: collectlistid, CollecterId: collecterid}).Find(&tmprecord2).Error; tmprecord2.Collecttime != "" {
 		log.Println(err)
 		log.Print("已收藏")
 		return false

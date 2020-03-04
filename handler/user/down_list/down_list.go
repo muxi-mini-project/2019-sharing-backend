@@ -58,14 +58,14 @@ func DownList(c *gin.Context) {
 	if err != nil {
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
-			"err":err,
+			"err":     err,
 		})
 		return
 	}
 
 	c.JSON(200, gin.H{
-		"message":      "successfully",
-		"lists": rows,
+		"message": "successfully",
+		"lists":   rows,
 	})
 	return
 }

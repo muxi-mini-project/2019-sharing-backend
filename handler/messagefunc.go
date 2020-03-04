@@ -25,11 +25,11 @@ type messagelist struct {
 // @Accept json
 // @Produce json
 // @Param token header string true "user的认证令牌"
-// @Param data body string true "请求id"
-// @Success 200 {object} model.Res "{"msg":"success"}/{"msg":"需求已经被删除了!"}/{"msg":"已经处理过了!"}"
-// @Failure 401 {object} error.Error "{"error_code":"10001", "message":"Token Invalid."} 身份认证失败 重新登录"
-// @Failure 400 {object} error.Error "{"error_code":"00001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
-// @Failure 500 {object} error.Error "{"error_code":"30001", "message":"Fail."} 失败"
+// @Param data body model.Note true "留言的对象以及留言内容"
+// @Success 200 {object} model.Res "{"message":"留言成功!"}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"无留言内容，请输入留言内容"} or {"message":"留言失败！"} "
 // @Router /message/leave/ [post]
 func LeaveMessage(c *gin.Context) {
 	var tmpnote note
@@ -77,6 +77,20 @@ func LeaveMessage(c *gin.Context) {
 	}
 }
 
+// @Summary 获取用户留言板信息
+// @Description 传入hostid与pagesize，page获取数组数据
+// @Tags message
+// @Accept json
+// @Produce json
+// @Param token header string true "user的认证令牌"
+// @Param hostid query string true "留言板主人的id"
+// @Param page query string true "页码"
+// @Param pagesize query string true "页码内容大小，即显示数量"
+// @Success 200 {object} model.Getmessage "{"message":"操作成功","message_list":数组,返回一系列留言属性}"
+// @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
+// @Failure 400 {object} model.Error "{"message":"传入参数不全"}"
+// @Failure 404 {object} model.Error "{"message":"未能成功找到相应留言内容"} or {"message":"未能成功获取留言用户头像信息！"}"
+// @Router /message/ [get]
 func GetMessageInfoByhostid(c *gin.Context) {
 	var tmpuser model.User
 	var tmpnote []model.Message
@@ -105,7 +119,7 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	sum := (page - 1) * pagesize
 	if hostid == "" {
 		log.Print("请至少输入hostid")
-		c.JSON(400,gin.H{
+		c.JSON(400, gin.H{
 			"message": "传入参数不全",
 		})
 		return
@@ -113,8 +127,8 @@ func GetMessageInfoByhostid(c *gin.Context) {
 	if err := model.DB.Self.Model(&model.Message{}).Where(&model.Message{HostId: hostid}).Offset(sum).Limit(pagesize).Find(&tmpnote).Error; err != nil {
 		log.Println(err)
 		log.Print("")
-		c.JSON(400, gin.H{
-			"message": "请至少输入hostid",
+		c.JSON(404, gin.H{
+			"message": "未能成功找到相应留言内容",
 		})
 		return
 	}
