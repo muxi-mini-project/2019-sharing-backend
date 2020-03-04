@@ -7,6 +7,19 @@ import (
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
 )
 
+// @Summary background
+// @Description 修改背景
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param User.Background_url body model.User.Background_url true "背景url"
+// @Param token header string true "token"
+// @Success 200 {object} model.Res "{"messsge":"successfully"}"
+// @Failure 401 {object} error.Error "{"error_code":"10001", "message":"Token Invalid."} 身份认证失败 重新登录 or {"error_code":"00002", "message":"wrong mysql."} "
+// @Failure 400 {object} error.Error "{"error_code":"00001", "message":"Fail."} or {"error_code":"00002", "message":"Lack Param Or Param Not Satisfiable."}"
+// @Failure 500 {object} error.Error "{"error_code":"30001", "message":"Fail."} 失败"
+// @Router /user/background/ [put]
+
 func Background(c *gin.Context) {
 
 	Token := c.Request.Header.Get("Token")
@@ -32,9 +45,9 @@ func Background(c *gin.Context) {
 	}
 
 	if err := model.Background_modify(data.User_id, data.Background_url); err != nil {
-		Println("222")
-		c.JSON(403, gin.H{
-			"message": "wrong Mysql",
+		//Println("222")
+		c.JSON(401, gin.H{
+			"message": "wrong mysql",
 		})
 		return
 	}
