@@ -52,6 +52,7 @@ func InitRouter() {
 	Router.POST("/file/score", handler.Score)
 	Router.POST("/user/collect_list/create", handler.CreateNewCollectlist)
 	Router.PUT("/user/collect_list", handler.ChangeCollectionlistName)
+	Router.DELETE("/user/collect_list/delete",handler.DeleteCollectlist)
 
 	return
 }

@@ -63,15 +63,23 @@ func CreateNewDownloadRecord(fileid int, downloaderid string) bool {
 }
 
 func CreateNewCollectRecord(fileid int, collecterid string, collectlistid int) bool {
-	var tmprecord File_collecter
+	var tmprecord1 File_collecter
 	var tmpfile File
-	tmprecord.FileId = fileid
-	tmprecord.CollecterId = collecterid
+	var tmprecord2 File_collecter
+	//对tmprecord1赋值，进行新建操作
+	tmprecord1.FileId = fileid
+	tmprecord1.CollecterId = collecterid
 	tNow := time.Now()
 	timeNow := tNow.Format("2006-01-02 15:04:05")
-	tmprecord.Collecttime = timeNow
-	tmprecord.CollectlistId = collectlistid
-	if err := DB.Self.Model(&File_downloader{}).Create(&tmprecord).Error; err != nil {
+	tmprecord1.Collecttime = timeNow
+	tmprecord1.CollectlistId = collectlistid
+	//利用tmprecord2进行一个记录是否存在的检测
+	if err := DB.Self.Model(&File_collecter{}).Where(&File_collecter{FileId:fileid,CollectlistId:collectlistid,CollecterId:collecterid}).Find(&tmprecord2).Error; tmprecord2.Collecttime != ""{
+		log.Println(err)
+		log.Print("已收藏")
+		return false
+	}
+	if err := DB.Self.Model(&File_collecter{}).Create(&tmprecord1).Error; err != nil {
 		log.Println(err)
 		log.Print("记录创建失败")
 		return false
