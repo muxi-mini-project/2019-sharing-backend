@@ -83,11 +83,6 @@ type File1 struct{
 	Scored		int 		`gorm:"scored" json:"scored"`
 }
 
-type Collect_list struct {
-	CollectlistId   int    `gorm:"collectlist_id"`
-	CollectlistName string `gorm:"collectlist_name"`
-	UserID          string `gorm:"user_id"`
-}
 
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
@@ -282,14 +277,14 @@ func CreateToken(user_id string) string {
 	return token
 }
 
-func Viewing(user_id string) (l User ,err1 error){
-	//var l User
+func Viewing(user_id string) (User ,error){
+	var l User
 	fmt.Println(user_id)
 	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l).Error; err != nil {
-		err1 =err
+		err1:=err
 	}
 	// return nil
-	err1 = nil
+	err1 :=nil
 	return l,err1
 }
 

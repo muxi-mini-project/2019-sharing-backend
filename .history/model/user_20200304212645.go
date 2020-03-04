@@ -83,11 +83,6 @@ type File1 struct{
 	Scored		int 		`gorm:"scored" json:"scored"`
 }
 
-type Collect_list struct {
-	CollectlistId   int    `gorm:"collectlist_id"`
-	CollectlistName string `gorm:"collectlist_name"`
-	UserID          string `gorm:"user_id"`
-}
 
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
@@ -282,15 +277,15 @@ func CreateToken(user_id string) string {
 	return token
 }
 
-func Viewing(user_id string) (l User ,err1 error){
-	//var l User
+func Viewing(user_id string) (User ,error){
+	var l User
 	fmt.Println(user_id)
 	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l).Error; err != nil {
-		err1 =err
+		return nil,err
 	}
 	// return nil
-	err1 = nil
-	return l,err1
+
+	return l,nil
 }
 
 func Token_info(Token string) (string, bool) {
@@ -357,10 +352,10 @@ func CreateFollowing(fans_id string, following_id string)error {
 	return nil
 }
 
-func GetDownFileid(uid string) (file_id []int,err1 error)  {
-	if err := DB.Self.Table("file_downloader").Where("downloader_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
-		err1 = err
-		return 
+func GetDownFileid(uid string) (file_id []int,err error)  {
+	if err = DB.Self.Table("file_downloader").Where("downloader_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
+		//err = nil
+		return err
 	}
 	return 
 }

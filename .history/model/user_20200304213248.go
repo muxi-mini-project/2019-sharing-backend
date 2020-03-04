@@ -286,7 +286,7 @@ func Viewing(user_id string) (l User ,err1 error){
 	//var l User
 	fmt.Println(user_id)
 	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l).Error; err != nil {
-		err1 =err
+		err1 :=err
 	}
 	// return nil
 	err1 = nil
