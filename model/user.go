@@ -25,6 +25,30 @@ type accountReqeustParams struct {
 	JSESSIONID string
 }
 
+
+type Res struct {
+	Message string `json:"massage"`
+}
+
+type File2 struct {
+	Message      string                `json:"message"`
+	//Total          int                   `json:"total"`
+	Lists 		[]File1				   `json:"lists"`
+}
+
+
+type User2 struct {
+	Message      string                `json:"message"`
+	Total          int                   `json:"total"`
+	Fans_lists 		[]User			   `json:"fans_lists"`
+}
+
+type Following2 struct {
+	Message      string                `json:"message"`
+	Total          int                   `json:"total"`
+	Following_lists 		[]Following				   `json:"following_lists"`
+}
+
 type User struct {
 	ID             int    `gorm:"id" json:"id"`
 	User_id        string `gorm:"user_id" json:"user_id"`
@@ -216,13 +240,23 @@ func makeAccountRequest(sid, password string, params *accountReqeustParams, clie
 }
 
 //注册用户
-func CreateUser(user_id string, user_name string, password string) {
-	DB.Self.Model(&User{}).Create(&User{User_id: user_id, User_name: user_name, Password: password})
-	CreateCollect_list(user_id)
+func CreateUser(user_id string, user_name string, password string) error{
+	if err :=DB.Self.Model(&User{}).Create(&User{User_id: user_id, User_name: user_name, Password: password}).Error; err != nil {
+		return err
+	}
+
+	err1:=CreateCollect_list(user_id)
+	if err1!=nil{
+		return err1
+	}
+	return nil
 }
 
-func CreateCollect_list(user_id string) {
-	DB.Self.Table("collect_list").Create(&Collect_list{CollectlistName: "默认文件夹", UserID: user_id})
+func CreateCollect_list(user_id string) error{
+	if err:=DB.Self.Table("collect_list").Create(&Collect_list{CollectlistName: "默认文件夹", UserID: user_id}).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func CheckUserByUser_id(user_id string) bool {
@@ -248,12 +282,15 @@ func CreateToken(user_id string) string {
 	return token
 }
 
-func Viewing(user_id string) User {
+func Viewing(user_id string) (User ,error){
 	var l User
 	fmt.Println(user_id)
-	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l)
+	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).First(&l).Error; err != nil {
+		return nil,err
+	}
+	// return nil
 
-	return l
+	return l,nil
 }
 
 func Token_info(Token string) (string, bool) {
@@ -295,30 +332,37 @@ func Background_modify(user_id string, background_url string) error {
 	if err := DB.Self.Model(&tmpUser).Table("user").Where("user_id =?", user_id).Update("background_url", background_url).Error; err != nil {
 		return err
 	}
-	fmt.Println(user_id)
-	fmt.Println(background_url)
 	return nil
 }
 
-func Image_modify(user_id string, image_url string) {
+func Image_modify(user_id string, image_url string)error {
 	//DB.Self.First(&User{})
-	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})
+	if err :=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Image_url: image_url})).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
-func Signture_modify(user_id string, signture string) {
-	DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})
+func Signture_modify(user_id string, signture string) error{
+	if err:=DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Update(User{Signture: signture})).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
-func CreateFollowing(fans_id string, following_id string) {
-	DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id, Following_id: following_id})
+func CreateFollowing(fans_id string, following_id string)error {
+	if err :=DB.Self.Model(&Following_fans{}).Create(&Following_fans{Fans_id: fans_id, Following_id: following_id})).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetDownFileid(uid string) (file_id []int,err error)  {
 	if err = DB.Self.Table("file_downloader").Where("downloader_id", uid).Pluck("file_id",&file_id).Error ; err != nil {
-		err = nil
-		return
+		//err = nil
+		return err
 	}
-	return
+	return nil
 }
 
 func List(fid []int)(file []File1,err error){
