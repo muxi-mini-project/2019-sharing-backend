@@ -106,14 +106,15 @@ func UploadFile(c *gin.Context) {
 func GetFileInfo(c *gin.Context) {
 	var tmpfile model.File
 	var tmprecord model.File_uploader
-	fileid, _ := strconv.Atoi(c.Param("fileid"))
-	if fileid == 0 {
+	/*if c.Param("fileid") == "" {
 		log.Print("请输入fileid")
 		c.JSON(400, gin.H{
 			"message": "请输入fileid",
 		})
 		return
-	}
+	}*/
+	fileid, _ := strconv.Atoi(c.Param("fileid"))
+
 	if err := model.DB.Self.Model(&model.File{}).Where(&model.File{FileId: fileid}).First(&tmpfile).Error; err != nil {
 		log.Println(err)
 		c.JSON(401, gin.H{
