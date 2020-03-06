@@ -83,11 +83,13 @@ type File1 struct{
 	Scored		int 		`gorm:"scored" json:"scored"`
 }
 
+/*
 type Collect_list struct {
 	CollectlistId   int    `gorm:"collectlist_id"`
 	CollectlistName string `gorm:"collectlist_name"`
 	UserID          string `gorm:"user_id"`
 }
+ */
 
 //确认模拟登陆是否成功
 func ConfirmUser(sid string, pwd string) bool {
