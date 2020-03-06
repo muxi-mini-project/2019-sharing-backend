@@ -58,7 +58,8 @@ func CollectionList(c *gin.Context) {
 	if err != nil {
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
-			"err":err,
+			"err":     err,
+		})
 		return
 	}
 

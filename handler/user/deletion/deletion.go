@@ -48,7 +48,8 @@ func Deletion(c *gin.Context) {
 		if err := model.DeleteFollowing(data.Fans_id, data.Following_id); err != nil {
 			c.JSON(401, gin.H{
 				"message": "wrong mysql",
-				"err":err,
+				"err":     err,
+			})
 		} else {
 			c.JSON(200, gin.H{
 				"message": "Deleting Successful!",
