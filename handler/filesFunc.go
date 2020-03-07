@@ -31,7 +31,7 @@ type collecttmp struct {
 // @Accept json
 // @Produce json
 // @Param token header string true "user的认证令牌"
-// @Param data body model.File true
+// @Param data body model.File true "传入文件相关数据"
 // @Success 200 {object} model.Res "{"message":"上传成功"}"
 // @Failure 401 {object} model.Error "{"message":"身份认证错误，请先登录或注册！"}"
 // @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
