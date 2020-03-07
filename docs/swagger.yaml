@@ -1,0 +1,755 @@
+basePath: /sharing/v1/
+definitions:
+  handler.collecttmp:
+    properties:
+      collectlist_id:
+        type: integer
+      file_id:
+        type: integer
+    type: object
+  handler.data:
+    properties:
+      collectlist_id:
+        type: integer
+      collectlist_name:
+        type: string
+    type: object
+  handler.tmp:
+    properties:
+      college:
+        type: string
+      format:
+        type: string
+      subject:
+        type: string
+      type:
+        type: string
+    type: object
+  handler.tmpint:
+    properties:
+      collectlist_id:
+        type: integer
+    type: object
+  handler.tmpscore:
+    properties:
+      file_id:
+        type: integer
+      score:
+        type: integer
+    type: object
+  handler.tmpstring:
+    properties:
+      collectlist_name:
+        type: string
+    type: object
+  model.Downloadfile:
+    properties:
+      file_url:
+        type: string
+      message:
+        type: string
+    type: object
+  model.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  model.File:
+    properties:
+      college:
+        type: string
+      content:
+        type: string
+      file_title:
+        type: string
+      file_url:
+        type: string
+      format:
+        type: string
+      subject:
+        type: string
+      type:
+        type: string
+    type: object
+  model.Getfiles:
+    properties:
+      files:
+        items:
+          $ref: '#/definitions/model.File'
+        type: array
+      message:
+        type: string
+    type: object
+  model.Getmessage:
+    properties:
+      message:
+        type: string
+      message_list:
+        items:
+          $ref: '#/definitions/model.Messagelist'
+        type: array
+    type: object
+  model.Messagelist:
+    properties:
+      image_url:
+        type: string
+      message:
+        type: string
+      write_time:
+        type: string
+      writer_id:
+        type: string
+    type: object
+  model.Note:
+    properties:
+      host_id:
+        type: string
+      message:
+        type: string
+    type: object
+  model.Res:
+    properties:
+      massage:
+        type: string
+    type: object
+  model.Tmpfileid:
+    properties:
+      file_id:
+        type: integer
+    type: object
+host: 47.102.120.167:2333
+info:
+  contact: {}
+  description: 资料共享平台
+  license: {}
+  title: sharing
+  version: "1.0"
+paths:
+  /file/collect/:
+    post:
+      consumes:
+      - application/json
+      description: 收藏文件
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id与收藏夹id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.collecttmp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"收藏成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"} or {"message":"参数不全，请输入collectlist_id"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"文件未找到！“} or {"message":"收藏行为不能被记录！“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 收藏文件
+      tags:
+      - file
+  /file/delete/:
+    delete:
+      consumes:
+      - application/json
+      description: 删除文件
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Tmpfileid'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"} or{"message":"身份认证错误！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"未找到或删除出现错误！“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 删除文件
+      tags:
+      - file
+  /file/download/:
+    get:
+      consumes:
+      - application/json
+      description: 下载文件
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Tmpfileid'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功！", "file_url":fileid对应的fileurl}'
+          schema:
+            $ref: '#/definitions/model.Downloadfile'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"文件未找到！“} or {"message":"下载行为不能被记录！“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 下载文件
+      tags:
+      - file
+  /file/fileinfo/:fileid/:
+    get:
+      consumes:
+      - application/json
+      description: 获取文件具体信息
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 传入除了数类的数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.File'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"信息获取成功","file":file结构体的所有信息}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"请输入fileid"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"查无此项或查询失败！"} or {"message":"该文件的上传时间查询出现问题"} '
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 获取文件具体信息
+      tags:
+      - file
+  /file/like/:
+    post:
+      consumes:
+      - application/json
+      description: 点赞文件
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Tmpfileid'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"点赞成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"} or {"message":"该用户已点过赞"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"点赞行为无法被记录！“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 点赞文件
+      tags:
+      - file
+  /file/score/:
+    post:
+      consumes:
+      - application/json
+      description: 评分
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id与本次打分分数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.tmpscore'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"评分成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"} or {"message":"评分失败！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"评分统计失败“} or {"message":"未找到相应文件“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 评分
+      tags:
+      - file
+  /file/searching/latest/:
+    get:
+      consumes:
+      - application/json
+      description: 获取最新发布的若干数据
+      parameters:
+      - description: 规定的数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.tmp'
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: 一页所显示的数据
+        in: query
+        name: pagesize
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"信息获取成功","files":在检索条件下的file切片的所有信息}'
+          schema:
+            $ref: '#/definitions/model.Getfiles'
+        "400":
+          description: '{"message":"Bad Request!"} or {"message":"数据获取失败"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 根据上传时间查询文件
+      tags:
+      - file
+  /file/searching/popular/:
+    get:
+      consumes:
+      - application/json
+      description: 获取热门下载内容
+      parameters:
+      - description: 规定的数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.tmp'
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: 一页所显示的数据
+        in: query
+        name: pagesize
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"信息获取成功","files":在检索条件下的file切片的所有信息}'
+          schema:
+            $ref: '#/definitions/model.Getfiles'
+        "400":
+          description: '{"message":"Bad Request!"} or {"message":"数据获取失败"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 根据下载数查询文件
+      tags:
+      - file
+  /file/unfavorite/:
+    delete:
+      consumes:
+      - application/json
+      description: 取消收藏
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件id与收藏夹id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.collecttmp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"取消收藏成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "403":
+          description: '{"message":"收藏统计失败"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"未找到或取消收藏失败！“} or {"message":"找不到对应文件“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 取消收藏
+      tags:
+      - file
+  /file/unlike/:
+    delete:
+      consumes:
+      - application/json
+      description: 取消点赞
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 文件
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Tmpfileid'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"取消点赞成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"取消点赞行为无法被记录！“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 取消点赞
+      tags:
+      - file
+  /file/upload/:
+    post:
+      consumes:
+      - application/json
+      description: 上传文件
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 传入文件相关数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.File'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"上传成功"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"建立数据失败“} or {"message":"上传行为无法被记录“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 上传文件
+      tags:
+      - file
+  /message/:
+    get:
+      consumes:
+      - application/json
+      description: 传入hostid与pagesize，page获取数组数据
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 留言板主人的id
+        in: query
+        name: hostid
+        required: true
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: 页码内容大小，即显示数量
+        in: query
+        name: pagesize
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"操作成功","message_list":数组,返回一系列留言属性}'
+          schema:
+            $ref: '#/definitions/model.Getmessage'
+        "400":
+          description: '{"message":"传入参数不全"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"未能成功找到相应留言内容"} or {"message":"未能成功获取留言用户头像信息！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 获取用户留言板信息
+      tags:
+      - message
+  /message/leave/:
+    post:
+      consumes:
+      - application/json
+      description: 根据userid检测是否为已注册用户进行的操作，随后根据传入的信息进行留言记录
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 留言的对象以及留言内容
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Note'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"留言成功!"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"无留言内容，请输入留言内容"} or {"message":"留言失败！"} '
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 发出留言
+      tags:
+      - message
+  /user/collect_list/:
+    put:
+      consumes:
+      - application/json
+      description: 收藏夹重命名
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 收藏夹id与新收藏夹名字
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.data'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"收藏夹改名成功"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"未找到收藏夹“} or {"message":"数据更新失败“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 收藏夹改名
+      tags:
+      - collectlist
+  /user/collect_list/create/:
+    post:
+      consumes:
+      - application/json
+      description: 新建收藏夹
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 收藏夹名称
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.tmpstring'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"收藏夹建立成功"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"收藏夹建立失败“} '
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 新建收藏夹
+      tags:
+      - collectlist
+  /user/collect_list/delete/:
+    delete:
+      consumes:
+      - application/json
+      description: 删除收藏夹
+      parameters:
+      - description: user的认证令牌
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: 收藏夹id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.tmpint'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"收藏夹删除成功"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"身份认证错误，请先登录或注册！"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"收藏夹删除失败“}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 删除收藏夹
+      tags:
+      - collectlist
+swagger: "2.0"
