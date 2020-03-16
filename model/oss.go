@@ -24,7 +24,7 @@ var initOSS = func() {
 	accessKey = ""
 	secretKey = ""
 	bucketName = "sharingmuxi"
-	domainName = ""
+	domainName = "sharingmuxi.s3-cn-south-1.qiniucs.com"
 	//未知，推测是对文件格式的一种支持策略，表示对于这些格式的文件均支持收纳
 	typeMap = map[string]bool{"jpg": true, "png": true, "bmp": true, "jpeg": true, "gif": true, "svg": true, "pdf":true,"ppt":true,"doc":true,"docx":true}
 }
@@ -89,3 +89,11 @@ func UploadImage(filename string, id uint32, r io.ReaderAt, dataLen int64) (stri
 	return url, nil
 }
 
+func GetDownloadUrl(filename string) string {
+	initOSS()
+	key := filename
+	mac := qbox.NewMac(accessKey, secretKey)
+	deadline := time.Now().Add(time.Second * 3600).Unix()
+	privateAccessURL := storage.MakePrivateURL(mac, domainName, key, deadline)
+	return privateAccessURL
+}

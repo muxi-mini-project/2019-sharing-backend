@@ -274,6 +274,9 @@ func DownloadFile(c *gin.Context) {
 		})
 		return
 	}
+
+	fileDownloadUrl := model.GetDownloadUrl(tmpfile.FileName)
+
 	if err := model.CreateNewDownloadRecord(tmpfile.FileId, key); !err {
 		log.Print("下载无法记录")
 		c.JSON(404, gin.H{
@@ -284,7 +287,7 @@ func DownloadFile(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message":  "下载成功",
-		"file_url": tmpfile.FileUrl,
+		"file_url": fileDownloadUrl,
 	})
 }
 
