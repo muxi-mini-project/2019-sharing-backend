@@ -29,6 +29,7 @@ type collecttmp struct {
 // @Description 上传文件
 // @Tags file
 // @Accept json
+// @Accept multipart/form-data
 // @Produce json
 // @Param token header string true "user的认证令牌"
 // @Param data body model.File true "传入文件相关数据"
@@ -64,6 +65,28 @@ func UploadFile(c *gin.Context) {
 		})
 		return
 	}
+
+//不知道原理，总之就是生成一个可以访问的url地址
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		log.Println(err)
+		c.JSON(400,gin.H{
+			"message": "Bad Request!",
+		})
+		return
+	}
+	dataLen := header.Size
+	id, _ := c.Get("id")
+	url, err := model.UploadImage(header.Filename, id.(uint32), file, dataLen)
+	if err != nil {
+		c.JSON(404,gin.H{
+			"message": "建立数据失败",
+		})
+		return
+	}
+
+	tmpfile.FileUrl = url
+
 	//建立新的记录，检验成功与否
 	if err := model.CreateNewfile(tmpfile); !err {
 		log.Print("建立数据失败")
@@ -87,6 +110,7 @@ func UploadFile(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(200, gin.H{
 		"message": "上传成功",
 	})
