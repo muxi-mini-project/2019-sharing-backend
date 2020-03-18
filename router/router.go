@@ -16,6 +16,9 @@ import (
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/signture"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/up_list"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler/user/view"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
+	_ "github.com/swaggo/gin-swagger/example/basic/docs"
 )
 
 var Router *gin.Engine
@@ -38,6 +41,8 @@ func InitRouter() {
 	Router.DELETE("/deletion", deletion.Deletion)                  //取消关注
 
 	Router.POST("/file/upload", handler.UploadFile)
+	Router.POST("/file/uploadbyOss/:fileid", handler.UploadByoss)
+
 	Router.GET("/file/fileinfo/:fileid", handler.GetFileInfo)
 	Router.DELETE("/file/delete", handler.DeleteFile)
 	Router.GET("/file/download", handler.DownloadFile)
@@ -53,6 +58,9 @@ func InitRouter() {
 	Router.POST("/user/collect_list/create", handler.CreateNewCollectlist)
 	Router.PUT("/user/collect_list", handler.ChangeCollectionlistName)
 	Router.DELETE("/user/collect_list/delete", handler.DeleteCollectlist)
+
+	Router.GET("/Swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 
 	return
 }
