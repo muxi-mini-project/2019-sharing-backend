@@ -21,10 +21,10 @@ var (
 )
 //不知道viper.getstring具体实现的原理，为初始化赋值与所需的基础属性
 var initOSS = func() {
-	accessKey = "D50XcYufGTmci9tQpiX6l2NBFuiz_F-zZ6j6pIlo"
-	secretKey = "j74ZX9pzUNUxCvcCSoT-JuPkQri-18tpvDSkIoyT"
-	bucketName = "sharingmuxi2"
-	domainName = "http://q7e5c9vps.bkt.clouddn.com/"
+	accessKey = ""
+	secretKey = ""
+	bucketName = ""
+	domainName = ""
 	//未知，推测是对文件格式的一种支持策略，表示对于这些格式的文件均支持收纳
 	typeMap = map[string]bool{"jpg": true, "png": true, "bmp": true, "jpeg": true, "gif": true, "svg": true, "pdf":true,"ppt":true,"doc":true,"docx":true,"txt":true}
 }
