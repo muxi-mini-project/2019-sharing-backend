@@ -5,8 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
-	"log"
-	"strconv"
 )
 
 // @Summary image
@@ -46,32 +44,11 @@ func Image(c *gin.Context) {
 		return
 	}
 
-	fileid, _ := strconv.Atoi(c.Param("fileid"))
-	file, header, err := c.Request.FormFile("file")
-	if err != nil {
-		log.Println(err)
-		c.JSON(400,gin.H{
-			"message": "Bad Request!",
-		})
-		return
-	}
-	dataLen := header.Size
 
-	data.Image_url, err := model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
-   log.Print(fileid)
-
-   if err != nil {
-	c.JSON(404,gin.H{
-		"message": "生成地址失败",
-	})
-	return
-}
-
+	
 	//model.Image_modify(data.User_id, data.Image_url)
 	if err := model.Image_modify(data.User_id, data.Image_url); err != nil {
 		//Println("222")
-		log.Println(err)
-		log.Print("更新地址失败")
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
 		})

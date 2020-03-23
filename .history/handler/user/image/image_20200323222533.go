@@ -73,7 +73,7 @@ func Image(c *gin.Context) {
 		log.Println(err)
 		log.Print("更新地址失败")
 		c.JSON(401, gin.H{
-			"message": "wrong mysql",
+			"message": "wrong mysql or 上传文件未生成一个可供匹配的地址，已删除，上传不成功",
 		})
 		return
 	}

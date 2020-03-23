@@ -5,8 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
-	"log"
-	"strconv"
 )
 
 // @Summary image
@@ -72,6 +70,11 @@ func Image(c *gin.Context) {
 		//Println("222")
 		log.Println(err)
 		log.Print("更新地址失败")
+		if err := model.DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Delete(User{}).Error; err != nil {
+			log.Println(err)
+			log.Print("删除无下载地址的文件失败")
+		}
+		log.Print("文件记录删除成功！")
 		c.JSON(401, gin.H{
 			"message": "wrong mysql",
 		})
