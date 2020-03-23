@@ -1,5 +1,5 @@
 package handler
-
+// @Success 200 {object} model.Res "{"message":"删除成功！"}"
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
@@ -7,6 +7,20 @@ import (
 	"strconv"
 )
 
+// @Tags upload
+// @Summary 上传文件,返回url，文件储存在oss上，同时得到一个可访问的地址，实质上实现了上传与下载
+// @Description
+// @Param token header string true "token“
+// @Param fileid path string true "token“
+// @Param file formData file true "资料文件"
+// @Accept multipart/form-data
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.Res "{"message":"删除成功！"}"
+// @Failure 401 {object} model.Error "{"message":"查无此项或查询失败!"}"
+// @Failure 400 {object} model.Error "{"message":"Bad Request!"}"
+// @Failure 404 {object} model.Error "{"message":"生成地址失败“} or{"message":"上传文件未生成一个可供匹配的地址，已删除，上传不成功"}"
+// @Router /file/uploadbyOss/:fileid/ [post]
 func UploadByoss(c *gin.Context){
 	var tmpfile model.File
 	fileid, _ := strconv.Atoi(c.Param("fileid"))
