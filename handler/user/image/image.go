@@ -57,7 +57,7 @@ func Image(c *gin.Context) {
 	}
 	dataLen := header.Size
 
-	data.Image_url, err := model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
+	data.Image_url, err = model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
    log.Print(fileid)
 
    if err != nil {
@@ -72,7 +72,7 @@ func Image(c *gin.Context) {
 		//Println("222")
 		log.Println(err)
 		log.Print("更新地址失败")
-		if err := model.DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Delete(User{}).Error; err != nil {
+		if err := model.DB.Self.Model(&model.User{}).Table("user").Where(model.User{User_id: user_id}).Delete(model.User{}).Error; err != nil {
 			log.Println(err)
 			log.Print("删除无下载地址的文件失败")
 		}

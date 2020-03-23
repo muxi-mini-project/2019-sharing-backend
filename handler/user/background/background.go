@@ -1,7 +1,7 @@
 package background
 
 import (
-	. "fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
@@ -58,7 +58,7 @@ func Background(c *gin.Context) {
 	}
 	dataLen := header.Size
 
-	data.Background_url, err := model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
+	data.Background_url, err = model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
 	log.Print(fileid)
 
 	if err != nil {
@@ -71,7 +71,7 @@ func Background(c *gin.Context) {
 	if err := model.Background_modify(data.User_id, data.Background_url); err != nil {
 		log.Println(err)
 		log.Print("更新地址失败")
-		if err := model.DB.Self.Model(&User{}).Table("user").Where(User{User_id: user_id}).Delete(User{}).Error; err != nil {
+		if err := model.DB.Self.Model(&model.User{}).Table("user").Where(model.User{User_id: user_id}).Delete(model.User{}).Error; err != nil {
 			log.Println(err)
 			log.Print("删除无下载地址的文件失败")
 		}
