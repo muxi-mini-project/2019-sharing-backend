@@ -57,7 +57,7 @@ func Image(c *gin.Context) {
 	}
 	dataLen := header.Size
 
-	data.Image_url, err := model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
+	data.Image_url, err = model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
    log.Print(fileid)
 
    if err != nil {

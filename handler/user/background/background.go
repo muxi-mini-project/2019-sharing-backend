@@ -1,7 +1,6 @@
 package background
 
 import (
-	. "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/muxi-mini-project/2020-sharing-backend/handler"
 	"github.com/muxi-mini-project/2020-sharing-backend/model"
@@ -58,7 +57,7 @@ func Background(c *gin.Context) {
 	}
 	dataLen := header.Size
 
-	data.Background_url, err := model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
+	data.Background_url, err = model.Uploadfile(header.Filename, uint32(fileid), file, dataLen)
 	log.Print(fileid)
 
 	if err != nil {
