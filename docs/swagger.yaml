@@ -548,6 +548,49 @@ paths:
       summary: 上传文件
       tags:
       - file
+  /file/uploadbyOss/:fileid/:
+    post:
+      consumes:
+      - multipart/form-data
+      - application/json
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: fileid
+        in: path
+        name: fileid
+        required: true
+        type: string
+      - description: 资料文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message":"删除成功！"}'
+          schema:
+            $ref: '#/definitions/model.Res'
+        "400":
+          description: '{"message":"Bad Request!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "401":
+          description: '{"message":"查无此项或查询失败!"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+        "404":
+          description: '{"message":"生成地址失败“} or{"message":"上传文件未生成一个可供匹配的地址，已删除，上传不成功"}'
+          schema:
+            $ref: '#/definitions/model.Error'
+      summary: 上传文件,返回url，文件储存在oss上，同时得到一个可访问的地址，实质上实现了上传与下载
+      tags:
+      - upload
   /message/:
     get:
       consumes:
