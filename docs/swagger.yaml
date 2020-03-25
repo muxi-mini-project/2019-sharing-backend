@@ -117,7 +117,7 @@ definitions:
       file_id:
         type: integer
     type: object
-host: 47.102.120.167:2333
+host: 175.24.42.160:8080
 info:
   contact: {}
   description: 资料共享平台

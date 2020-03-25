@@ -7,7 +7,7 @@
         "license": {},
         "version": "1.0"
     },
-    "host": "47.102.120.167:2333",
+    "host": "175.24.42.160:8080",
     "basePath": "/sharing/v1/",
     "paths": {
         "/file/collect/": {

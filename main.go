@@ -7,12 +7,11 @@ import (
 	"github.com/muxi-mini-project/2020-sharing-backend/router"
 )
 
-
 // @title sharing
 // @version 1.0
 // @description 资料共享平台
 
-// @host 47.102.120.167:2333
+// @host 175.24.42.160:8080
 // @BasePath /sharing/v1/
 
 // @Schemas http

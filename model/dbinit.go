@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-const dns = "root:4399687@tcp(localhost:3306)/muxi_sharing"
+const dns = "root:@tcp(localhost:3306)/muxi_sharing"
 
 type Database struct {
 	Self *gorm.DB
